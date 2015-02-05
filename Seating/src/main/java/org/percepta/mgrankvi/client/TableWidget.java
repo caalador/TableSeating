@@ -1,6 +1,9 @@
 package org.percepta.mgrankvi.client;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.query.client.GQuery;
+import com.google.gwt.query.client.css.CSS;
+import com.google.gwt.query.client.css.Length;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -13,8 +16,10 @@ import org.percepta.mgrankvi.client.contact.ContactList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.gwt.query.client.GQuery.$;
+
 /**
- * Simple component for 2d visualisation.
+ * Simple component to visualize a table with seating and seat information
  *
  * @author Mikael Grankvist - Vaadin }>
  */
@@ -29,8 +34,6 @@ public class TableWidget extends SimplePanel {
     private int tableWidth = 300;
     private TableSeatPlacing seatPlacing;
 
-    private boolean show = true;
-
     private static int LIST_WIDTH = 300;
 
     private List<Element> seats = new LinkedList<>();
@@ -42,8 +45,6 @@ public class TableWidget extends SimplePanel {
         content = DOM.createDiv();
         getElement().appendChild(content);
         style = content.getStyle();
-//        style.setZIndex(50);
-//        style.setBackgroundColor("BLUE");
         style.setPosition(Style.Position.RELATIVE);
         style.setTop(0, Style.Unit.PX);
         style.setWidth(tableWidth, Style.Unit.PX);
@@ -52,7 +53,6 @@ public class TableWidget extends SimplePanel {
         table = DOM.createDiv();
         Style st = table.getStyle();
         st.setZIndex(51);
-//        style.setBackgroundColor("BLUE");
         st.setPosition(Style.Position.ABSOLUTE);
         st.setBorderColor("BLACK");
         st.setBorderWidth(1.0, Style.Unit.PX);
@@ -62,17 +62,10 @@ public class TableWidget extends SimplePanel {
         st.setHeight(100, Style.Unit.PCT);
         content.appendChild(table);
 
-//        style.setProperty("transition", "all 1s ease");
-//        style.setProperty("transitionProperty", "top, height");
-
-//        getElement().appendChild(content);
-
         contactList = new ContactList();
-//        contactList.addData(new ArrayList<Contact>(){{add(new Contact("James Bean")); add(new Contact("Joe Cool"));}});
-
-//        contactStyle = contactList.getElement().getStyle();
 
         Element contactHolder = DOM.createDiv();
+        contactHolder.setClassName("contact-list");
         contactHolder.appendChild(contactList.getElement());
 
         contactHolderStyle = contactHolder.getStyle();
@@ -94,9 +87,7 @@ public class TableWidget extends SimplePanel {
         addStyleVersions(contactHolderStyle, "transition", "all 1s ease");
         addStyleVersions(contactHolderStyle, "transitionProperty", "top, left, height, width");
 
-
         getElement().appendChild(contactHolder);
-
 
         Event.sinkEvents(table, Event.ONCLICK);
         Event.setEventListener(table, showListPopupListener);
@@ -106,42 +97,45 @@ public class TableWidget extends SimplePanel {
     EventListener showListPopupListener = new EventListener() {
         @Override
         public void onBrowserEvent(Event event) {
-//            if (show) {
-            contactHolderStyle.setVisibility(Style.Visibility.VISIBLE);
+            boolean hide = contactHolderStyle.getVisibility().equals(Style.Visibility.VISIBLE.getCssName());
 
-            contactHolderStyle.setWidth(LIST_WIDTH, Style.Unit.PX);
-            contactHolderStyle.setHeight(500, Style.Unit.PX);
+            GQuery allOpenContactLists = $(".contact-list");
+            allOpenContactLists.css(CSS.VISIBILITY.with(Style.Visibility.HIDDEN));
+            allOpenContactLists.css(CSS.WIDTH.with(Length.px(0)));
+            allOpenContactLists.css(CSS.HEIGHT.with(Length.px(0)));
+            allOpenContactLists.css(CSS.LEFT.with(Length.px(0)));
 
-            int offsetWidth = content.getOffsetWidth();
-            int parentWidth = getParent().getOffsetWidth();
-            contactHolderStyle.setLeft((content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH) > parentWidth ? -LIST_WIDTH - 20 : offsetWidth + 20, Style.Unit.PX);
-            show = false;
-            event.stopPropagation();
-            Event.sinkEvents(getParent().getElement(), Event.ONCLICK);
-            Event.setEventListener(getParent().getElement(), hideListPopupListener);
-//            } else {
-//                contactHolderStyle.setVisibility(Style.Visibility.HIDDEN);
-//                contactHolderStyle.setWidth(0, Style.Unit.PX);
-//                contactHolderStyle.setHeight(0, Style.Unit.PX);
-//                contactHolderStyle.setLeft(0, Style.Unit.PX);
-//                show = true;
-//                Event.releaseCapture(getParent().getElement());
-//            }
+            if (hide) {
+                event.stopPropagation();
+                Event.releaseCapture(getParent().getElement());
+            } else {
+                contactHolderStyle.setVisibility(Style.Visibility.VISIBLE);
+
+                contactHolderStyle.setWidth(LIST_WIDTH, Style.Unit.PX);
+                contactHolderStyle.setHeight(500, Style.Unit.PX);
+
+                int offsetWidth = content.getOffsetWidth();
+                int parentWidth = getParent().getOffsetWidth();
+                contactHolderStyle.setLeft((content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH) > parentWidth ? -LIST_WIDTH - 20 : offsetWidth + 20, Style.Unit.PX);
+
+                event.stopPropagation();
+                Event.sinkEvents(getParent().getElement(), Event.ONCLICK);
+                Event.setEventListener(getParent().getElement(), hideListPopupListener);
+            }
         }
     };
 
     EventListener hideListPopupListener = new EventListener() {
         @Override
         public void onBrowserEvent(Event event) {
-            contactHolderStyle.setVisibility(Style.Visibility.HIDDEN);
-            contactHolderStyle.setWidth(0, Style.Unit.PX);
-            contactHolderStyle.setHeight(0, Style.Unit.PX);
-            contactHolderStyle.setLeft(0, Style.Unit.PX);
-            show = true;
+            GQuery allOpenContactLists = $(".contact-list");
+            allOpenContactLists.css(CSS.VISIBILITY.with(Style.Visibility.HIDDEN));
+            allOpenContactLists.css(CSS.WIDTH.with(Length.px(0)));
+            allOpenContactLists.css(CSS.HEIGHT.with(Length.px(0)));
+            allOpenContactLists.css(CSS.LEFT.with(Length.px(0)));
+
             event.stopPropagation();
             Event.releaseCapture(getParent().getElement());
-            Event.sinkEvents(table, Event.ONCLICK);
-            Event.setEventListener(table, showListPopupListener);
         }
     };
 
