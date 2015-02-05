@@ -1,22 +1,20 @@
 package org.percepta.mgrankvi.client;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.query.client.GQuery;
-import com.google.gwt.query.client.css.CSS;
-import com.google.gwt.query.client.css.Length;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.percepta.mgrankvi.client.contact.Contact;
 import org.percepta.mgrankvi.client.contact.ContactList;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import static com.google.gwt.query.client.GQuery.$;
 
 /**
  * Simple component to visualize a table with seating and seat information
@@ -39,7 +37,7 @@ public class TableWidget extends SimplePanel {
     private List<Element> seats = new LinkedList<>();
     private List<Contact> seating = new LinkedList<>();
 
-    private boolean hovering;
+    private boolean hovering = true;
 
     public TableWidget() {
         content = DOM.createDiv();
@@ -99,11 +97,7 @@ public class TableWidget extends SimplePanel {
         public void onBrowserEvent(Event event) {
             boolean hide = contactHolderStyle.getVisibility().equals(Style.Visibility.VISIBLE.getCssName());
 
-            GQuery allOpenContactLists = $(".contact-list");
-            allOpenContactLists.css(CSS.VISIBILITY.with(Style.Visibility.HIDDEN));
-            allOpenContactLists.css(CSS.WIDTH.with(Length.px(0)));
-            allOpenContactLists.css(CSS.HEIGHT.with(Length.px(0)));
-            allOpenContactLists.css(CSS.LEFT.with(Length.px(0)));
+            hideAllContactLists();
 
             if (hide) {
                 event.stopPropagation();
@@ -128,16 +122,22 @@ public class TableWidget extends SimplePanel {
     EventListener hideListPopupListener = new EventListener() {
         @Override
         public void onBrowserEvent(Event event) {
-            GQuery allOpenContactLists = $(".contact-list");
-            allOpenContactLists.css(CSS.VISIBILITY.with(Style.Visibility.HIDDEN));
-            allOpenContactLists.css(CSS.WIDTH.with(Length.px(0)));
-            allOpenContactLists.css(CSS.HEIGHT.with(Length.px(0)));
-            allOpenContactLists.css(CSS.LEFT.with(Length.px(0)));
+            hideAllContactLists();
 
             event.stopPropagation();
             Event.releaseCapture(getParent().getElement());
         }
     };
+
+    protected void hideAllContactLists() {
+        for (Element element : getElementsByClassName("contact-list", getParent().getElement())) {
+            Style style = element.getStyle();
+            style.setVisibility(Style.Visibility.HIDDEN);
+            style.setWidth(0, Style.Unit.PX);
+            style.setHeight(0, Style.Unit.PX);
+            style.setLeft(0, Style.Unit.PX);
+        }
+    }
 
     private Element createChair() {
         Element chair = DOM.createDiv();
@@ -249,13 +249,19 @@ public class TableWidget extends SimplePanel {
             public void onBrowserEvent(Event event) {
                 if (event.getTypeInt() == Event.ONMOUSEOVER) {
                     int x = event.getClientX() - content.getAbsoluteLeft();
-                    int y = event.getClientY() - content.getAbsoluteTop();
+                    int y = event.getClientY() - content.getAbsoluteTop() + 5;
 
                     int offsetWidth = content.getOffsetWidth();
                     int parentWidth = getParent().getOffsetWidth();
 
                     if ((content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH) > parentWidth) {
                         x -= LIST_WIDTH;
+                    } else {
+                        int clientWidth = Window.getClientWidth();
+                        if (event.getClientX() + LIST_WIDTH > clientWidth) {
+                            int offset = clientWidth - event.getClientX();
+                            x -= (LIST_WIDTH - offset) + 20;
+                        }
                     }
                     if (popup != null) {
                         getElement().removeChild(popup);
@@ -313,4 +319,59 @@ public class TableWidget extends SimplePanel {
     public void setHovering(boolean hovering) {
         this.hovering = hovering;
     }
+
+
+    /**
+     *
+     */
+
+    /**
+     * List all elements with the specified class. Try first the implementation of DOM's getElementsByClassName.
+     * If not present try to use XPATH. If xpath is not supported searches DOM structure.
+     */
+    public static List<Element> getElementsByClassName(String className, Element parentElement) {
+        JavaScriptObject elements = getElementsByClassNameInternal(className, parentElement);
+
+        int length = getArrayLength(elements);
+
+        Element[] result = new Element[length];
+        for (int i = 0; i < length; i++) {
+            result[i] = getArrayElement(elements, i);
+        }
+        return Arrays.asList(result);
+    }
+
+    private static native JavaScriptObject getElementsByClassNameInternal(String className, Element parentElement)/*-{
+        if ((parentElement && parentElement.getElementsByClassName) || $doc.getElementsByClassName) {
+            return (parentElement || $doc).getElementsByClassName(className);
+        }
+        else if (document.evaluate) {
+            var expression = ".//*[contains(concat(' ', @class, ' '), ' " + className + " ')]";
+            var results = [];
+            var query = $doc.evaluate(expression, parentElement || $doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            for (var i = 0, length = query.snapshotLength; i < length; i++)
+                results.push(query.snapshotItem(i));
+            return results;
+        }
+        else {
+            var children = (parentElement || $doc.body).getElementsByTagName('*');
+            var elements = [], child, pattern = new RegExp("(^|\\s)" + className + "(\\s|$)");
+            for (var i = 0, length = children.length; i < length; i++) {
+                child = children[i];
+                var elementClassName = child.className;
+                if (elementClassName.length == 0) continue;
+                if (elementClassName == className || elementClassName.match(pattern))
+                    elements.push(child);
+            }
+            return elements;
+        }
+    }-*/;
+
+    private static native int getArrayLength(JavaScriptObject array)/*-{
+        return array.length;
+    }-*/;
+
+    private static native Element getArrayElement(JavaScriptObject array, int position)/*-{
+        return (position >= 0 && position < array.length ? array[position] : null);
+    }-*/;
 }
