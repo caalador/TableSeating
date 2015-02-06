@@ -35,7 +35,6 @@ public class TableConnector extends AbstractComponentConnector {
         super.onStateChanged(stateChangeEvent);
 
         getWidget().setSeatPlacing(getState().placing);
-        VConsole.log("adding contacts " + getState().seating.size());
         getWidget().addContacts(getState().seating);
         getWidget().rotate(getState().rotateDeg);
     }
@@ -54,6 +53,11 @@ public class TableConnector extends AbstractComponentConnector {
 //    void setSeatingStyle() {
 //        getWidget().setSeatPlacing(getState().placing);
 //    }
+    @OnStateChange("seats")
+    void setSeats() {
+        getWidget().setSeatAmount(getState().seats);
+    }
+
     @OnStateChange("seatSize")
     void setSeatSize() {
         getWidget().setSeatSize(getState().seatSize);

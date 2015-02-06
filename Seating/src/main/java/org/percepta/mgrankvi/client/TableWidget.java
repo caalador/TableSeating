@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.vaadin.client.VConsole;
 import org.percepta.mgrankvi.client.contact.Contact;
 import org.percepta.mgrankvi.client.contact.ContactList;
 
@@ -25,11 +26,11 @@ public class TableWidget extends SimplePanel {
 
     private Style style, contactHolderStyle;
     private ContactList contactList;
-    private Element content, popup, table;
+    private Element content, popup;
 
     private int seatSize = 50;
-    private int tableHeight = 75;
-    private int tableWidth = 300;
+    private int tableHeight = 100;
+    private int tableWidth = 100;
     private TableSeatPlacing seatPlacing;
 
     private static int LIST_WIDTH = 300;
@@ -38,6 +39,9 @@ public class TableWidget extends SimplePanel {
     private List<Contact> seating = new LinkedList<>();
 
     private boolean hovering = true;
+    private int seatAmount = 0;
+
+    private Element contactHolder;
 
     public TableWidget() {
         content = DOM.createDiv();
@@ -48,7 +52,7 @@ public class TableWidget extends SimplePanel {
         style.setWidth(tableWidth, Style.Unit.PX);
         style.setHeight(tableHeight, Style.Unit.PX);
 
-        table = DOM.createDiv();
+        Element table = DOM.createDiv();
         Style st = table.getStyle();
         st.setZIndex(51);
         st.setPosition(Style.Position.ABSOLUTE);
@@ -62,13 +66,14 @@ public class TableWidget extends SimplePanel {
 
         contactList = new ContactList();
 
-        Element contactHolder = DOM.createDiv();
+        contactHolder = DOM.createDiv();
         contactHolder.setClassName("contact-list");
         contactHolder.appendChild(contactList.getElement());
 
         contactHolderStyle = contactHolder.getStyle();
 
         contactHolderStyle.setPosition(Style.Position.ABSOLUTE);
+        contactHolderStyle.setZIndex(59);
 
         contactHolderStyle.setWidth(0, Style.Unit.PX);
         contactHolderStyle.setHeight(0, Style.Unit.PX);
@@ -85,11 +90,17 @@ public class TableWidget extends SimplePanel {
         addStyleVersions(contactHolderStyle, "transition", "all 1s ease");
         addStyleVersions(contactHolderStyle, "transitionProperty", "top, left, height, width");
 
-        getElement().appendChild(contactHolder);
+//        getParent().getElement().appendChild(contactHolder);
 
         Event.sinkEvents(table, Event.ONCLICK);
         Event.setEventListener(table, showListPopupListener);
 
+    }
+
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+        getParent().getElement().appendChild(contactHolder);
     }
 
     EventListener showListPopupListener = new EventListener() {
@@ -110,7 +121,16 @@ public class TableWidget extends SimplePanel {
 
                 int offsetWidth = content.getOffsetWidth();
                 int parentWidth = getParent().getOffsetWidth();
-                contactHolderStyle.setLeft((content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH) > parentWidth ? -LIST_WIDTH - 20 : offsetWidth + 20, Style.Unit.PX);
+
+                Style elementStyle = getElement().getStyle();
+                int elementLeft = parseInt(elementStyle.getLeft());
+                int elementTop= parseInt(elementStyle.getTop());
+                if(content.getAbsoluteLeft() + offsetWidth < parentWidth) {
+                    contactHolderStyle.setLeft(elementLeft + offsetWidth, Style.Unit.PX);
+                } else {
+                    contactHolderStyle.setLeft(elementLeft - LIST_WIDTH - 20, Style.Unit.PX);
+                }
+                contactHolderStyle.setTop(elementTop, Style.Unit.PX);
 
                 event.stopPropagation();
                 Event.sinkEvents(getParent().getElement(), Event.ONCLICK);
@@ -212,7 +232,7 @@ public class TableWidget extends SimplePanel {
             Style s = chair.getStyle();
             s.setLeft(position, Style.Unit.PX);
             s.setBackgroundColor(seating.get(i).colour);
-            addClickListenerForChair(seating.get(i), chair);
+            addListenerForChair(seating.get(i), chair);
 
             switch (seatPlacing) {
                 case ALL_DOWN:
@@ -235,10 +255,46 @@ public class TableWidget extends SimplePanel {
             content.appendChild(chair);
         }
 
-        style.setWidth(seating.size() % 2 == 0 ? position : position + 10 + seatSize, Style.Unit.PX);
+        if (seating.size() < seatAmount) {
+            VConsole.log("Seats = " + (seatAmount - seating.size()));
+            for (int i = 0; i < seatAmount - seating.size(); i++) {
+                Element chair = createChair();
+                seats.add(chair);
+                Style s = chair.getStyle();
+                s.setLeft(position, Style.Unit.PX);
+                s.setBackgroundColor("WHITE");
+
+                switch (seatPlacing) {
+                    case ALL_DOWN:
+                        s.setTop(tableHeight - 20, Style.Unit.PX);
+                        position += 10 + seatSize;
+                        break;
+                    case ALL_UP:
+                        s.setTop(-30, Style.Unit.PX);
+                        position += 10 + seatSize;
+                        break;
+                    case EQUAL:
+                    default:
+                        s.setTop(i % 2 == 0 ? -30 : tableHeight - 20, Style.Unit.PX);
+                        // move position after we have added a chair to the bottom.
+                        if (i % 2 == 1) {
+                            position += 10 + seatSize;
+                        }
+                }
+
+                content.appendChild(chair);
+            }
+            style.setWidth(seatAmount % 2 == 0 ? position : position + 10 + seatSize, Style.Unit.PX);
+        } else {
+            style.setWidth(seating.size() % 2 == 0 ? position : position + 10 + seatSize, Style.Unit.PX);
+        }
+        VConsole.log("Position: " + position);
     }
 
-    private void addClickListenerForChair(final Contact contact, Element chair) {
+    private int parseInt(String string) {
+        return Integer.parseInt(string.substring(0, string.indexOf("px")));
+    }
+    private void addListenerForChair(final Contact contact, final Element chair) {
         if (!hovering) {
             return;
         }
@@ -248,21 +304,11 @@ public class TableWidget extends SimplePanel {
             @Override
             public void onBrowserEvent(Event event) {
                 if (event.getTypeInt() == Event.ONMOUSEOVER) {
-                    int x = event.getClientX() - content.getAbsoluteLeft();
-                    int y = event.getClientY() - content.getAbsoluteTop() + 5;
+                    Style elementStyle = getElement().getStyle();
 
-                    int offsetWidth = content.getOffsetWidth();
-                    int parentWidth = getParent().getOffsetWidth();
+                    int x = parseInt(elementStyle.getLeft());
+                    int y = parseInt(elementStyle.getTop());
 
-                    if ((content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH) > parentWidth) {
-                        x -= LIST_WIDTH;
-                    } else {
-                        int clientWidth = Window.getClientWidth();
-                        if (event.getClientX() + LIST_WIDTH > clientWidth) {
-                            int offset = clientWidth - event.getClientX();
-                            x -= (LIST_WIDTH - offset) + 20;
-                        }
-                    }
                     if (popup != null) {
                         getElement().removeChild(popup);
                         popup = null;
@@ -283,11 +329,11 @@ public class TableWidget extends SimplePanel {
                     ContactList.getContactRender(contact, builder);
                     popup.setInnerSafeHtml(builder.toSafeHtml());
 
-                    getElement().appendChild(popup);
+                    getParent().getElement().appendChild(popup);
 
                 } else if (event.getTypeInt() == Event.ONMOUSEOUT) {
                     if (popup != null) {
-                        getElement().removeChild(popup);
+                        getParent().getElement().removeChild(popup);
                         popup = null;
                     }
                 }
@@ -306,6 +352,11 @@ public class TableWidget extends SimplePanel {
 
     public void setSeatSize(int seatSize) {
         if (seatSize != this.seatSize) {
+            this.seatSize = seatSize;
+
+            tableHeight = seatSize * 2;
+            style.setHeight(tableHeight, Style.Unit.PX);
+
             for (Element seat : seats) {
                 content.removeChild(seat);
                 Event.releaseCapture(seat);
@@ -313,16 +364,18 @@ public class TableWidget extends SimplePanel {
             seats.clear();
             createSeatsAndSetTableWidth(seating);
         }
-        this.seatSize = seatSize;
     }
 
     public void setHovering(boolean hovering) {
         this.hovering = hovering;
     }
 
+    public void setSeatAmount(int seatAmount) {
+        this.seatAmount = seatAmount;
+    }
 
     /**
-     *
+     * Native JS methods for traversing dom tree.
      */
 
     /**
@@ -344,16 +397,14 @@ public class TableWidget extends SimplePanel {
     private static native JavaScriptObject getElementsByClassNameInternal(String className, Element parentElement)/*-{
         if ((parentElement && parentElement.getElementsByClassName) || $doc.getElementsByClassName) {
             return (parentElement || $doc).getElementsByClassName(className);
-        }
-        else if (document.evaluate) {
+        } else if (document.evaluate) {
             var expression = ".//*[contains(concat(' ', @class, ' '), ' " + className + " ')]";
             var results = [];
             var query = $doc.evaluate(expression, parentElement || $doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
             for (var i = 0, length = query.snapshotLength; i < length; i++)
                 results.push(query.snapshotItem(i));
             return results;
-        }
-        else {
+        } else {
             var children = (parentElement || $doc.body).getElementsByTagName('*');
             var elements = [], child, pattern = new RegExp("(^|\\s)" + className + "(\\s|$)");
             for (var i = 0, length = children.length; i < length; i++) {
@@ -374,4 +425,42 @@ public class TableWidget extends SimplePanel {
     private static native Element getArrayElement(JavaScriptObject array, int position)/*-{
         return (position >= 0 && position < array.length ? array[position] : null);
     }-*/;
+
+    private static native int getPageXOffset()
+    /*-{
+        if ($wnd.pageXOffset) {
+            return $wnd.pageXOffset;
+        }
+        if ($wnd.scrollLeft) {
+            return $wnd.scrollLeft;
+        }
+        return -1;
+    }-*/;
+
+    private static native int getPageYOffset()
+    /*-{
+        if ($wnd.pageYOffset) {
+            return $wnd.pageYOffset;
+        }
+        if ($wnd.scrollTop) {
+            return $wnd.scrollTop;
+        }
+        return -1;
+    }-*/;
+
+    public static int getScrollLeft() {
+        int left = getPageXOffset();
+        if (left == -1) {
+            left = Window.getScrollLeft();
+        }
+        return left;
+    }
+
+    public static int getScrollTop() {
+        int top = getPageYOffset();
+        if (top == -1) {
+            top = Window.getScrollTop();
+        }
+        return top;
+    }
 }

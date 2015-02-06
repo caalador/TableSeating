@@ -57,7 +57,7 @@ public class SeatingLayoutWidget extends Composite implements ImageLoadHandler {
      * @param integers
      */
     public void add(Widget widget, Integer[] integers) {
-        widget.getElement().getStyle().setZIndex(5);
+        widget.getElement().getStyle().setZIndex(1);
 
         children.put(widget, integers);
         panel.add(widget, integers[0], integers[1]);
@@ -115,7 +115,7 @@ public class SeatingLayoutWidget extends Composite implements ImageLoadHandler {
         if (!hasCaption.containsKey(widget)) {
             final Integer[] position = children.get(widget);
 
-            caption.getElement().getStyle().setZIndex(5);
+            caption.getElement().getStyle().setZIndex(1);
             caption.updateCaption();
 
             HandlerRegistration handlerRegistration = caption.addAttachHandler(new AttachEvent.Handler() {

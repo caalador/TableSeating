@@ -1,5 +1,6 @@
 package org.percepta.mgrankvi;
 
+import com.google.gwt.thirdparty.guava.common.collect.Lists;
 import com.vaadin.ui.AbstractComponent;
 import org.percepta.mgrankvi.client.TableSeatPlacing;
 import org.percepta.mgrankvi.client.TableState;
@@ -7,6 +8,7 @@ import org.percepta.mgrankvi.client.contact.Contact;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Really simple Level visualisation component
@@ -15,8 +17,10 @@ import java.util.LinkedList;
  */
 public class Table extends AbstractComponent {
 
-    public Table(int width, int maxHeight) {
-        getState().tableWidth = width;
+    private List<Contact> contacts = Lists.newLinkedList();
+
+    public Table(int seats, int maxHeight) {
+        getState().seats = seats;
         getState().maxHeight = maxHeight;
     }
 
@@ -35,13 +39,16 @@ public class Table extends AbstractComponent {
 
     public void addContact(Contact contact){
         getState().seating.add(contact);
-        System.out.println(getState().seating.size());
+
+        contacts.add(contact);
+
         markAsDirty();
     }
 
     public void addContacts(Contact... contacts) {
         getState().seating.addAll(Arrays.asList(contacts));
-        getState().tableWidth++;
+
+        this.contacts.addAll(Arrays.asList(contacts));
 
         markAsDirty();
     }

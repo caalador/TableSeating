@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TableState extends AbstractComponentState {
 
-    public int tableWidth = 0;
+    public int seats = 0;
 
     public int maxHeight = 0;
 
