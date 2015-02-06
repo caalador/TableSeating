@@ -40,6 +40,7 @@ public class TableWidget extends SimplePanel {
 
     private boolean hovering = true;
     private int seatAmount = 0;
+    private int rotation = 0;
 
     private Element contactHolder;
 
@@ -90,11 +91,8 @@ public class TableWidget extends SimplePanel {
         addStyleVersions(contactHolderStyle, "transition", "all 1s ease");
         addStyleVersions(contactHolderStyle, "transitionProperty", "top, left, height, width");
 
-//        getParent().getElement().appendChild(contactHolder);
-
         Event.sinkEvents(table, Event.ONCLICK);
         Event.setEventListener(table, showListPopupListener);
-
     }
 
     @Override
@@ -124,9 +122,11 @@ public class TableWidget extends SimplePanel {
 
                 Style elementStyle = getElement().getStyle();
                 int elementLeft = parseInt(elementStyle.getLeft());
-                int elementTop= parseInt(elementStyle.getTop());
-                if(content.getAbsoluteLeft() + offsetWidth < parentWidth) {
-                    contactHolderStyle.setLeft(elementLeft + offsetWidth, Style.Unit.PX);
+                int elementTop = parseInt(elementStyle.getTop());
+                VConsole.log((content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH + 20) + " : " + Window.getClientWidth());
+                VConsole.log("Content absolute: " + content.getAbsoluteLeft());
+                if (content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH < parentWidth && content.getAbsoluteLeft() + offsetWidth + LIST_WIDTH + 20 < Window.getClientWidth()) {
+                    contactHolderStyle.setLeft(elementLeft + offsetWidth + 20, Style.Unit.PX);
                 } else {
                     contactHolderStyle.setLeft(elementLeft - LIST_WIDTH - 20, Style.Unit.PX);
                 }
@@ -203,6 +203,7 @@ public class TableWidget extends SimplePanel {
     }
 
     public void rotate(int rotateDeg) {
+        rotation = rotateDeg;
         addStyleVersions(style, "transform", "rotate(" + rotateDeg + "deg)");
     }
 
@@ -294,6 +295,7 @@ public class TableWidget extends SimplePanel {
     private int parseInt(String string) {
         return Integer.parseInt(string.substring(0, string.indexOf("px")));
     }
+
     private void addListenerForChair(final Contact contact, final Element chair) {
         if (!hovering) {
             return;
@@ -306,8 +308,19 @@ public class TableWidget extends SimplePanel {
                 if (event.getTypeInt() == Event.ONMOUSEOVER) {
                     Style elementStyle = getElement().getStyle();
 
-                    int x = parseInt(elementStyle.getLeft());
-                    int y = parseInt(elementStyle.getTop());
+                    int x = parseInt(elementStyle.getLeft()) + chair.getOffsetLeft();
+
+                    int elementTop = parseInt(elementStyle.getTop());
+                    int y = elementTop + seatSize + chair.getOffsetTop();
+                    if(rotation != 0) {
+                        int elementDiff = elementTop - getElement().getAbsoluteTop();
+                        y = elementTop + seatSize - (elementTop - (chair.getAbsoluteTop() + elementDiff));
+                    }
+
+                    if (event.getClientX() + LIST_WIDTH > Window.getClientWidth()) {
+                        int offset = event.getClientX() + LIST_WIDTH - Window.getClientWidth();
+                        x -= (offset + 20);
+                    }
 
                     if (popup != null) {
                         getElement().removeChild(popup);
