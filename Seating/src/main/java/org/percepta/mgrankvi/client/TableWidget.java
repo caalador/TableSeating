@@ -403,7 +403,7 @@ public class TableWidget extends SimplePanel {
             Element chair = seatingMap.get(highlight);
             if (chair != null) {
                 showChairPopup(chair, highlight);
-                chair.scrollIntoView();
+                popup.scrollIntoView();
             }
         }
     }
