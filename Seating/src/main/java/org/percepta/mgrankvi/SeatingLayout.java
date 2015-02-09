@@ -67,7 +67,15 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
     public void highlightContact(Contact contact) {
         if (contact != null) {
             Table table = searchResults.get(contact);
-            table.highlightContact(contact);
+            if(table != null) {
+                for(Component component : componentToCoordinates.keySet()) {
+                    if(component instanceof Table) {
+                        ((Table)component).highlightContact(null);
+                    }
+                }
+                table.highlightContact(contact);
+
+            }
         }
     }
 

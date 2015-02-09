@@ -54,6 +54,9 @@ public class TableConnector extends AbstractComponentConnector {
     void showPopup() {
         if (getState().highlight != null) {
             getWidget().showContactPopup(getState().highlight);
+        } else {
+            getWidget().hidePopup();
         }
+
     }
 }

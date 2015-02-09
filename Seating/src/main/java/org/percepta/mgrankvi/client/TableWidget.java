@@ -341,7 +341,7 @@ public class TableWidget extends SimplePanel {
         }
 
         if (popup != null) {
-            getElement().removeChild(popup);
+            getParent().getElement().removeChild(popup);
             popup = null;
         }
         popup = DOM.createDiv();
@@ -405,6 +405,13 @@ public class TableWidget extends SimplePanel {
                 showChairPopup(chair, highlight);
                 popup.scrollIntoView();
             }
+        }
+    }
+
+    public void hidePopup() {
+        if (popup != null) {
+            getParent().getElement().removeChild(popup);
+            popup = null;
         }
     }
 
