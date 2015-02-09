@@ -14,8 +14,10 @@ import org.percepta.mgrankvi.client.contact.Contact;
 import org.percepta.mgrankvi.client.contact.ContactList;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Simple component to visualize a table with seating and seat information
@@ -37,6 +39,8 @@ public class TableWidget extends SimplePanel {
 
     private List<Element> seats = new LinkedList<>();
     private List<Contact> seating = new LinkedList<>();
+
+    Map<Contact, Element> seatingMap = new HashMap<>();
 
     private boolean hovering = true;
     private int seatAmount = 0;
@@ -229,6 +233,7 @@ public class TableWidget extends SimplePanel {
         int position = 10;
         for (int i = 0; i < seating.size(); i++) {
             Element chair = createChair();
+            seatingMap.put(seating.get(i), chair);
             seats.add(chair);
             Style s = chair.getStyle();
             s.setLeft(position, Style.Unit.PX);
@@ -306,44 +311,7 @@ public class TableWidget extends SimplePanel {
             @Override
             public void onBrowserEvent(Event event) {
                 if (event.getTypeInt() == Event.ONMOUSEOVER) {
-                    Style elementStyle = getElement().getStyle();
-
-                    int x = parseInt(elementStyle.getLeft()) + chair.getOffsetLeft();
-
-                    int elementTop = parseInt(elementStyle.getTop());
-                    int y = elementTop + seatSize + chair.getOffsetTop();
-                    if(rotation != 0) {
-                        int elementDiff = elementTop - getElement().getAbsoluteTop();
-                        y = elementTop + seatSize - (elementTop - (chair.getAbsoluteTop() + elementDiff));
-                    }
-
-                    if (event.getClientX() + LIST_WIDTH > Window.getClientWidth()) {
-                        int offset = event.getClientX() + LIST_WIDTH - Window.getClientWidth();
-                        x -= (offset + 20);
-                    }
-
-                    if (popup != null) {
-                        getElement().removeChild(popup);
-                        popup = null;
-                    }
-                    popup = DOM.createDiv();
-                    Style popupStyle = popup.getStyle();
-                    popupStyle.setWidth(LIST_WIDTH, Style.Unit.PX);
-                    popupStyle.setZIndex(60);
-                    popupStyle.setPosition(Style.Position.ABSOLUTE);
-                    popupStyle.setBorderColor("BLACK");
-                    popupStyle.setBorderWidth(1.0, Style.Unit.PX);
-                    popupStyle.setBorderStyle(Style.BorderStyle.SOLID);
-                    popupStyle.setBackgroundColor("white");
-                    popupStyle.setLeft(x, Style.Unit.PX);
-                    popupStyle.setTop(y, Style.Unit.PX);
-
-                    SafeHtmlBuilder builder = new SafeHtmlBuilder();
-                    ContactList.getContactRender(contact, builder);
-                    popup.setInnerSafeHtml(builder.toSafeHtml());
-
-                    getParent().getElement().appendChild(popup);
-
+                    showChairPopup(chair, contact);
                 } else if (event.getTypeInt() == Event.ONMOUSEOUT) {
                     if (popup != null) {
                         getParent().getElement().removeChild(popup);
@@ -353,6 +321,48 @@ public class TableWidget extends SimplePanel {
             }
         });
 
+    }
+
+    protected void showChairPopup(Element chair, Contact contact) {
+        Style elementStyle = getElement().getStyle();
+
+        int x = parseInt(elementStyle.getLeft()) + chair.getOffsetLeft();
+
+        int elementTop = parseInt(elementStyle.getTop());
+        int y = elementTop + seatSize + chair.getOffsetTop();
+        if (rotation != 0) {
+            int elementDiff = elementTop - getElement().getAbsoluteTop();
+            y = elementTop + seatSize - (elementTop - (chair.getAbsoluteTop() + elementDiff));
+        }
+
+        if (chair.getAbsoluteLeft() + LIST_WIDTH > Window.getClientWidth()) {
+            int offset = chair.getAbsoluteLeft() + LIST_WIDTH - Window.getClientWidth();
+            x -= (offset + 20);
+        }
+
+        if (popup != null) {
+            getElement().removeChild(popup);
+            popup = null;
+        }
+        popup = DOM.createDiv();
+        Style popupStyle = popup.getStyle();
+        popupStyle.setWidth(LIST_WIDTH, Style.Unit.PX);
+        popupStyle.setZIndex(60);
+        popupStyle.setPosition(Style.Position.ABSOLUTE);
+        popupStyle.setBorderColor("BLACK");
+        popupStyle.setBorderWidth(1.0, Style.Unit.PX);
+        popupStyle.setBorderStyle(Style.BorderStyle.SOLID);
+        popupStyle.setBackgroundColor("white");
+        popupStyle.setLeft(x, Style.Unit.PX);
+        popupStyle.setTop(y, Style.Unit.PX);
+
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+
+        ContactList.getContactRender(contact, builder);
+
+        popup.setInnerSafeHtml(builder.toSafeHtml());
+
+        getParent().getElement().appendChild(popup);
     }
 
     public void setSeatPlacing(TableSeatPlacing seatPlacing) {
@@ -374,6 +384,7 @@ public class TableWidget extends SimplePanel {
                 content.removeChild(seat);
                 Event.releaseCapture(seat);
             }
+            seatingMap.clear();
             seats.clear();
             createSeatsAndSetTableWidth(seating);
         }
@@ -385,6 +396,16 @@ public class TableWidget extends SimplePanel {
 
     public void setSeatAmount(int seatAmount) {
         this.seatAmount = seatAmount;
+    }
+
+    public void showContactPopup(Contact highlight) {
+        if (highlight != null) {
+            Element chair = seatingMap.get(highlight);
+            if (chair != null) {
+                showChairPopup(chair, highlight);
+                chair.scrollIntoView();
+            }
+        }
     }
 
     /**

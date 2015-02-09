@@ -1,13 +1,16 @@
 package org.percepta.mgrankvi;
 
+import com.google.gwt.thirdparty.guava.common.collect.Lists;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HasComponents;
 import org.percepta.mgrankvi.client.SeatingLayoutState;
+import org.percepta.mgrankvi.client.contact.Contact;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,10 +20,11 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
 
     private LinkedHashMap<Component, Position> componentToCoordinates = new LinkedHashMap<Component, Position>();
 
+    private Map<Contact, Table> searchResults = new HashMap<>();
+
     public SeatingLayout(String image) {
         getState().image = image;
     }
-
 
     public void setImage(String image) {
         getState().image = image;
@@ -31,6 +35,41 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
         return (SeatingLayoutState) super.getState();
     }
 
+
+    /**
+     * Find contact by name from added tables and seats.
+     *
+     * @param name Full name or part name
+     * @return List of contacts with matching/containing Name value
+     */
+    public List<Contact> findContact(String name) {
+        List<Contact> contacts = Lists.newLinkedList();
+        for (Component component : componentToCoordinates.keySet()) {
+            if (component instanceof Table) {
+                Table table = (Table) component;
+                List<Contact> tableMatches = table.findContact(name);
+                contacts.addAll(tableMatches);
+
+                for (Contact contact : tableMatches) {
+                    if (!searchResults.containsKey(contact)) {
+                        searchResults.put(contact, table);
+                    }
+                }
+            }
+        }
+        return contacts;
+    }
+
+    /**
+     * Highlight contact on screen (Show contact popup)
+     * @param contact
+     */
+    public void highlightContact(Contact contact) {
+        if (contact != null) {
+            Table table = searchResults.get(contact);
+            table.highlightContact(contact);
+        }
+    }
 
     @Override
     public void addComponent(final Component c) {

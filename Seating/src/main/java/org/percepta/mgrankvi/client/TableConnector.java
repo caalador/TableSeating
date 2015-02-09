@@ -1,6 +1,5 @@
 package org.percepta.mgrankvi.client;
 
-import com.vaadin.client.VConsole;
 import com.vaadin.client.annotations.OnStateChange;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentConnector;
@@ -27,9 +26,6 @@ public class TableConnector extends AbstractComponentConnector {
         return (TableState) super.getState();
     }
 
-//    @OnStateChange("seating")
-//    void addContacts() {
-
     @Override
     public void onStateChanged(StateChangeEvent stateChangeEvent) {
         super.onStateChanged(stateChangeEvent);
@@ -39,20 +35,6 @@ public class TableConnector extends AbstractComponentConnector {
         getWidget().rotate(getState().rotateDeg);
     }
 
-//    @OnStateChange("tableWidth")
-//    void setWidth() {
-//        getWidget().setWidth(getState().tableWidth);
-//    }
-
-//    @OnStateChange("rotateDeg")
-//    void rotateTable() {
-//        getWidget().rotate(getState().rotateDeg);
-//    }
-//
-//    @OnStateChange("placing")
-//    void setSeatingStyle() {
-//        getWidget().setSeatPlacing(getState().placing);
-//    }
     @OnStateChange("seats")
     void setSeats() {
         getWidget().setSeatAmount(getState().seats);
@@ -66,5 +48,12 @@ public class TableConnector extends AbstractComponentConnector {
     @OnStateChange("enableOnHover")
     void setOnHover() {
         getWidget().setHovering(getState().enableOnHover);
+    }
+
+    @OnStateChange("updateHighlight")
+    void showPopup() {
+        if (getState().highlight != null) {
+            getWidget().showContactPopup(getState().highlight);
+        }
     }
 }

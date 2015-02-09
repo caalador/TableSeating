@@ -7,7 +7,6 @@ import org.percepta.mgrankvi.client.TableState;
 import org.percepta.mgrankvi.client.contact.Contact;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,13 +30,18 @@ public class Table extends AbstractComponent {
 
     /**
      * Rotate table given degrees
+     *
      * @param rotation degrees to rotate table
      */
     public void setTableRotation(int rotation) {
         getState().rotateDeg = rotation;
     }
 
-    public void addContact(Contact contact){
+    /**
+     * Add a new contact to table
+     * @param contact
+     */
+    public void addContact(Contact contact) {
         getState().seating.add(contact);
 
         contacts.add(contact);
@@ -45,6 +49,10 @@ public class Table extends AbstractComponent {
         markAsDirty();
     }
 
+    /**
+     * Add new contacts to table
+     * @param contacts
+     */
     public void addContacts(Contact... contacts) {
         getState().seating.addAll(Arrays.asList(contacts));
 
@@ -53,15 +61,52 @@ public class Table extends AbstractComponent {
         markAsDirty();
     }
 
+    /**
+     * Set the seat Placing scheme for table
+     * @param placing
+     */
     public void setTableSeatPlacing(TableSeatPlacing placing) {
         getState().placing = placing;
     }
 
+    /**
+     * Set the seat size in px
+     * @param sizeInPx
+     */
     public void setSeatSize(int sizeInPx) {
         getState().seatSize = sizeInPx;
     }
 
+    /**
+     * Enable/disable the hover feature for chair contacts.
+     * @param onHover
+     */
     public void setShowOnHover(boolean onHover) {
         getState().enableOnHover = onHover;
+    }
+
+    /**
+     * Search for contact with name.
+     *
+     * @param name
+     * @return
+     */
+    public List<Contact> findContact(String name) {
+        List<Contact> matchingContacts = Lists.newLinkedList();
+        for (Contact contact : contacts) {
+            if (contact.name.toLowerCase().contains(name.toLowerCase())) {
+                matchingContacts.add(contact);
+            }
+        }
+        return matchingContacts;
+    }
+
+    /**
+     * Highlight (show popup for) given contact on screen
+     * @param contact
+     */
+    public void highlightContact(Contact contact) {
+        getState().updateHighlight = !getState().updateHighlight;
+        getState().highlight = contact;
     }
 }

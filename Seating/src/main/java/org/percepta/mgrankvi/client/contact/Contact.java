@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class Contact implements Serializable {
 
-    protected String id;
+    public String id;
 
     public String name = "";
     public String image = null;
@@ -16,25 +16,15 @@ public class Contact implements Serializable {
 
     public String colour = "";
 
-    public Contact() {
-        this("", null, "white", "", "");
-    }
+    public Contact() {}
 
-    public Contact(String name) {
-        this(name, null, "white", "", "");
-    }
-
-    public Contact(String name, String image, String colour, String quote, String quotedPerson) {
-        id = getUUID();
+    public Contact(String id, String name, String image, String colour, String quote, String quotedPerson) {
+        this.id = id;
         this.colour = colour;
         this.name = name;
         this.image = image;
         this.quote = quote;
         this.quotedPerson = quotedPerson;
-    }
-
-    public static String getUUID() {
-        return uuid();
     }
 
     private static final char[] CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
@@ -56,5 +46,20 @@ public class Contact implements Serializable {
             }
         }
         return new String(uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return (id + name).hashCode();
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Contact) {
+            Contact other = (Contact) obj;
+            return id.equals(other.id) && name.equals(other.name);
+        }
+        return false;
     }
 }
