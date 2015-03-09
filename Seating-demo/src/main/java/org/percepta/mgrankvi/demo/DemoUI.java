@@ -196,7 +196,7 @@ public class DemoUI extends UI {
 
         table = new Table(2, 130);
         table.addContact(new Contact(Contact.uuid(), "Bride", null, Colours.cssColours[i++], "We loved with a love that was more than love.", "Edgar Allan Poe"));
-        table.addContact(new Contact(Contact.uuid(), "Groom", null, Colours.cssColours[i++], "The sweetest of all sounds is that of the voice of the woman we love.", "Jean de la Bruyere"));
+        table.addContact(new Contact(Contact.uuid(), "Groom", "VAADIN/images/gloom.png", Colours.cssColours[i++], "The sweetest of all sounds is that of the voice of the woman we love.", "Jean de la Bruyere"));
 
         table.setTableSeatPlacing(TableSeatPlacing.ALL_UP);
 
