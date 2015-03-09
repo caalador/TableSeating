@@ -50,6 +50,8 @@ public class TableWidget extends SimplePanel {
 
     private Element contactHolder;
 
+    private SeatFillDirection fillDirection;
+
     public TableWidget() {
         content = DOM.createDiv();
         getElement().appendChild(content);
@@ -227,6 +229,9 @@ public class TableWidget extends SimplePanel {
     }
 
     public void addContacts(List<Contact> seating) {
+        if(seatAmount < seating.size()) {
+            seatAmount = seating.size();
+        }
         contactList.addData(seating);
 
         createSeatsAndSetTableWidth(seating);
@@ -234,9 +239,20 @@ public class TableWidget extends SimplePanel {
 
     private void createSeatsAndSetTableWidth(List<Contact> seating) {
         int position = 10;
-        for (int i = 0; i < seating.size(); i++) {
+        int emptySeats = seatAmount - seating.size();
+        int lastSeat = 0;
+
+        int realSeats = seating.size();
+        if (fillDirection.equals(SeatFillDirection.FIRST) && emptySeats > 0) {
+            for (; lastSeat < emptySeats; lastSeat++) {
+                position = createEmptySeat(position, lastSeat);
+            }
+            realSeats += emptySeats;
+        }
+
+        for (int i = 0; lastSeat < realSeats; lastSeat++) {
             Element chair = createChair();
-            Contact contact = seating.get(i);
+            Contact contact = seating.get(i++);
             seatingMap.put(contact, chair);
             idContact.put(contact.id, contact);
             seats.add(chair);
@@ -256,9 +272,9 @@ public class TableWidget extends SimplePanel {
                     break;
                 case EQUAL:
                 default:
-                    s.setTop(i % 2 == 0 ? -30 : tableHeight - 20, Style.Unit.PX);
+                    s.setTop(lastSeat % 2 == 0 ? -30 : tableHeight - 20, Style.Unit.PX);
                     // move position after we have added a chair to the bottom.
-                    if (i % 2 == 1) {
+                    if (lastSeat % 2 == 1) {
                         position += 10 + seatSize;
                     }
             }
@@ -266,38 +282,42 @@ public class TableWidget extends SimplePanel {
             content.appendChild(chair);
         }
 
-        if (seating.size() < seatAmount) {
-            for (int i = 0; i < seatAmount - seating.size(); i++) {
-                Element chair = createChair();
-                seats.add(chair);
-                Style s = chair.getStyle();
-                s.setLeft(position, Style.Unit.PX);
-                s.setBackgroundColor("WHITE");
-
-                switch (seatPlacing) {
-                    case ALL_DOWN:
-                        s.setTop(tableHeight - 20, Style.Unit.PX);
-                        position += 10 + seatSize;
-                        break;
-                    case ALL_UP:
-                        s.setTop(-30, Style.Unit.PX);
-                        position += 10 + seatSize;
-                        break;
-                    case EQUAL:
-                    default:
-                        s.setTop(i % 2 == 0 ? -30 : tableHeight - 20, Style.Unit.PX);
-                        // move position after we have added a chair to the bottom.
-                        if (i % 2 == 1) {
-                            position += 10 + seatSize;
-                        }
-                }
-
-                content.appendChild(chair);
+        if (fillDirection.equals(SeatFillDirection.LAST) && emptySeats > 0) {
+            for (; lastSeat < seatAmount; lastSeat++) {
+                position = createEmptySeat(position, lastSeat);
             }
-            style.setWidth(seatAmount % 2 == 0 ? position : position + 10 + seatSize, Style.Unit.PX);
-        } else {
-            style.setWidth(seating.size() % 2 == 0 ? position : position + 10 + seatSize, Style.Unit.PX);
         }
+
+        style.setWidth(seatAmount % 2 == 0 ? position : position + 10 + seatSize, Style.Unit.PX);
+    }
+
+    private int createEmptySeat(int position, int i) {
+        Element chair = createChair();
+        seats.add(chair);
+        Style s = chair.getStyle();
+        s.setLeft(position, Style.Unit.PX);
+        s.setBackgroundColor("WHITE");
+
+        switch (seatPlacing) {
+            case ALL_DOWN:
+                s.setTop(tableHeight - 20, Style.Unit.PX);
+                position += 10 + seatSize;
+                break;
+            case ALL_UP:
+                s.setTop(-30, Style.Unit.PX);
+                position += 10 + seatSize;
+                break;
+            case EQUAL:
+            default:
+                s.setTop(i % 2 == 0 ? -30 : tableHeight - 20, Style.Unit.PX);
+                // move position after we have added a chair to the bottom.
+                if (i % 2 == 1) {
+                    position += 10 + seatSize;
+                }
+        }
+
+        content.appendChild(chair);
+        return position;
     }
 
     private int parseInt(String string) {
@@ -398,7 +418,9 @@ public class TableWidget extends SimplePanel {
     }
 
     public void setSeatAmount(int seatAmount) {
-        this.seatAmount = seatAmount;
+        this.seatAmount = seatAmount; if(seatAmount < seating.size()) {
+            seatAmount = seating.size();
+        }
     }
 
     public void showContactPopup(Contact highlight) {
@@ -418,6 +440,10 @@ public class TableWidget extends SimplePanel {
             getParent().getElement().removeChild(popup);
             popup = null;
         }
+    }
+
+    public void setFillDirection(SeatFillDirection fillDirection) {
+        this.fillDirection = fillDirection;
     }
 
     /**
@@ -509,6 +535,11 @@ public class TableWidget extends SimplePanel {
         }
         return top;
     }
+
+    /**
+     * HANDLERS
+     */
+
 
     private ContactHandler contactHandler = new ContactHandler() {
         @Override

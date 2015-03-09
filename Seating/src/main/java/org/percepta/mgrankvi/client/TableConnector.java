@@ -64,21 +64,8 @@ public class TableConnector extends AbstractComponentConnector {
         getWidget().setHovering(getState().enableOnHover);
     }
 
-//    @OnStateChange("updateHighlight")
-//    void showPopup() {
-//        if (getState().highlight != null) {
-//            getWidget().showContactPopup(getState().highlight);
-//        } else {
-//            getWidget().hidePopup();
-//        }
-//    }
-//
-//    @OnStateChange("highlight")
-//    void showPop() {
-//        if (getState().highlight != null) {
-//            getWidget().showContactPopup(getState().highlight);
-//        } else {
-//            getWidget().hidePopup();
-//        }
-//    }
+    @OnStateChange("fillDirection")
+    void setFillDirection() {
+        getWidget().setFillDirection(getState().fillDirection);
+    }
 }

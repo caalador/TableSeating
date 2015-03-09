@@ -15,6 +15,7 @@ import org.percepta.mgrankvi.Colours;
 import org.percepta.mgrankvi.Position;
 import org.percepta.mgrankvi.SeatingLayout;
 import org.percepta.mgrankvi.Table;
+import org.percepta.mgrankvi.client.SeatFillDirection;
 import org.percepta.mgrankvi.client.TableSeatPlacing;
 import org.percepta.mgrankvi.client.contact.Contact;
 
@@ -87,6 +88,8 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(60, 200));
 
         table = new Table(10, 130);
+        table.setFillDirection(SeatFillDirection.FIRST);
+        table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -99,9 +102,6 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(60, 450));
 
         table = new Table(10, 130);
-        table.addContact(createContact(i++));
-        table.addContact(createContact(i++));
-        table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));

@@ -2,6 +2,7 @@ package org.percepta.mgrankvi;
 
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
 import com.vaadin.ui.AbstractComponent;
+import org.percepta.mgrankvi.client.SeatFillDirection;
 import org.percepta.mgrankvi.client.TableClientRpc;
 import org.percepta.mgrankvi.client.TableSeatPlacing;
 import org.percepta.mgrankvi.client.TableState;
@@ -48,6 +49,10 @@ public class Table extends AbstractComponent {
         contacts.add(contact);
 
         markAsDirty();
+    }
+
+    public void setFillDirection(SeatFillDirection direction) {
+        getState().fillDirection = direction;
     }
 
     /**
