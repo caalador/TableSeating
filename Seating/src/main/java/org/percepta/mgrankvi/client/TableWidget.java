@@ -414,8 +414,10 @@ public class TableWidget extends SimplePanel {
     }
 
     public void setSeatAmount(int seatAmount) {
-        this.seatAmount = seatAmount; if(seatAmount < seating.size()) {
-            seatAmount = seating.size();
+        this.seatAmount = seatAmount;
+
+        if(seatAmount < seating.size()) {
+            this.seatAmount = seating.size();
         }
     }
 
