@@ -5,6 +5,7 @@ import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentConnector;
 import com.vaadin.shared.ui.Connect;
 import org.percepta.mgrankvi.Table;
+import org.percepta.mgrankvi.client.contact.Contact;
 
 /**
  * Connector for the level visualizer component
@@ -13,6 +14,19 @@ import org.percepta.mgrankvi.Table;
  */
 @Connect(Table.class)
 public class TableConnector extends AbstractComponentConnector {
+
+    public TableConnector() {
+        registerRpc(TableClientRpc.class, new TableClientRpc() {
+            @Override
+            public void highlightContact(Contact contact) {
+                if(contact != null ){
+                    getWidget().showContactPopup(contact);
+                } else {
+                    getWidget().hidePopup();
+                }
+            }
+        });
+    }
 
     // We must implement getWidget() to cast to correct type
     @Override
@@ -50,13 +64,21 @@ public class TableConnector extends AbstractComponentConnector {
         getWidget().setHovering(getState().enableOnHover);
     }
 
-    @OnStateChange("updateHighlight")
-    void showPopup() {
-        if (getState().highlight != null) {
-            getWidget().showContactPopup(getState().highlight);
-        } else {
-            getWidget().hidePopup();
-        }
-
-    }
+//    @OnStateChange("updateHighlight")
+//    void showPopup() {
+//        if (getState().highlight != null) {
+//            getWidget().showContactPopup(getState().highlight);
+//        } else {
+//            getWidget().hidePopup();
+//        }
+//    }
+//
+//    @OnStateChange("highlight")
+//    void showPop() {
+//        if (getState().highlight != null) {
+//            getWidget().showContactPopup(getState().highlight);
+//        } else {
+//            getWidget().hidePopup();
+//        }
+//    }
 }

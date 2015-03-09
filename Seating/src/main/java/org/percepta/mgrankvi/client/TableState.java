@@ -21,7 +21,4 @@ public class TableState extends AbstractComponentState {
     public List<Contact> seating = new LinkedList<>();
 
     public TableSeatPlacing placing = TableSeatPlacing.EQUAL;
-
-    public Contact highlight;
-    public boolean updateHighlight = false;
 }

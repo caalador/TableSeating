@@ -2,6 +2,7 @@ package org.percepta.mgrankvi;
 
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
 import com.vaadin.ui.AbstractComponent;
+import org.percepta.mgrankvi.client.TableClientRpc;
 import org.percepta.mgrankvi.client.TableSeatPlacing;
 import org.percepta.mgrankvi.client.TableState;
 import org.percepta.mgrankvi.client.contact.Contact;
@@ -106,7 +107,6 @@ public class Table extends AbstractComponent {
      * @param contact
      */
     public void highlightContact(Contact contact) {
-        getState().updateHighlight = !getState().updateHighlight;
-        getState().highlight = contact;
+        getRpcProxy(TableClientRpc.class).highlightContact(contact);
     }
 }

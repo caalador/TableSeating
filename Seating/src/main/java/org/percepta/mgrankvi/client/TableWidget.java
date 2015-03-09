@@ -11,6 +11,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.vaadin.client.VConsole;
 import org.percepta.mgrankvi.client.contact.Contact;
+import org.percepta.mgrankvi.client.contact.ContactHandler;
 import org.percepta.mgrankvi.client.contact.ContactList;
 
 import java.util.Arrays;
@@ -41,6 +42,7 @@ public class TableWidget extends SimplePanel {
     private List<Contact> seating = new LinkedList<>();
 
     Map<Contact, Element> seatingMap = new HashMap<>();
+    Map<String, Contact> idContact = new HashMap<>();
 
     private boolean hovering = true;
     private int seatAmount = 0;
@@ -70,6 +72,7 @@ public class TableWidget extends SimplePanel {
         content.appendChild(table);
 
         contactList = new ContactList();
+        contactList.addContactHandler(contactHandler);
 
         contactHolder = DOM.createDiv();
         contactHolder.setClassName("contact-list");
@@ -119,7 +122,7 @@ public class TableWidget extends SimplePanel {
                 contactHolderStyle.setVisibility(Style.Visibility.VISIBLE);
 
                 contactHolderStyle.setWidth(LIST_WIDTH, Style.Unit.PX);
-                contactHolderStyle.setHeight(500, Style.Unit.PX);
+                contactHolderStyle.setHeight(390, Style.Unit.PX);
 
                 int offsetWidth = content.getOffsetWidth();
                 int parentWidth = getParent().getOffsetWidth();
@@ -233,12 +236,14 @@ public class TableWidget extends SimplePanel {
         int position = 10;
         for (int i = 0; i < seating.size(); i++) {
             Element chair = createChair();
-            seatingMap.put(seating.get(i), chair);
+            Contact contact = seating.get(i);
+            seatingMap.put(contact, chair);
+            idContact.put(contact.id, contact);
             seats.add(chair);
             Style s = chair.getStyle();
             s.setLeft(position, Style.Unit.PX);
-            s.setBackgroundColor(seating.get(i).colour);
-            addListenerForChair(seating.get(i), chair);
+            s.setBackgroundColor(contact.colour);
+            addListenerForChair(contact, chair);
 
             switch (seatPlacing) {
                 case ALL_DOWN:
@@ -262,7 +267,6 @@ public class TableWidget extends SimplePanel {
         }
 
         if (seating.size() < seatAmount) {
-            VConsole.log("Seats = " + (seatAmount - seating.size()));
             for (int i = 0; i < seatAmount - seating.size(); i++) {
                 Element chair = createChair();
                 seats.add(chair);
@@ -294,7 +298,6 @@ public class TableWidget extends SimplePanel {
         } else {
             style.setWidth(seating.size() % 2 == 0 ? position : position + 10 + seatSize, Style.Unit.PX);
         }
-        VConsole.log("Position: " + position);
     }
 
     private int parseInt(String string) {
@@ -399,8 +402,10 @@ public class TableWidget extends SimplePanel {
     }
 
     public void showContactPopup(Contact highlight) {
+        VConsole.log("Highlight " + highlight);
         if (highlight != null) {
             Element chair = seatingMap.get(highlight);
+            VConsole.log("Found chair for highlight: " + (chair != null));
             if (chair != null) {
                 showChairPopup(chair, highlight);
                 popup.scrollIntoView();
@@ -504,4 +509,16 @@ public class TableWidget extends SimplePanel {
         }
         return top;
     }
+
+    private ContactHandler contactHandler = new ContactHandler() {
+        @Override
+        public void contactOver(String id) {
+            seatingMap.get(idContact.get(id)).getStyle().setZIndex(55);
+        }
+
+        @Override
+        public void contactOut(String id) {
+            seatingMap.get(idContact.get(id)).getStyle().setZIndex(40);
+        }
+    };
 }

@@ -21,6 +21,7 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
     private LinkedHashMap<Component, Position> componentToCoordinates = new LinkedHashMap<Component, Position>();
 
     private Map<Contact, Table> searchResults = new HashMap<>();
+    private boolean multiple = false;
 
     public SeatingLayout(String image) {
         getState().image = image;
@@ -61,6 +62,14 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
     }
 
     /**
+     * Allow showing multiple highlights at one time
+     * @param multiple
+     */
+    public void setMultiple(boolean multiple) {
+        this.multiple = multiple;
+    }
+
+    /**
      * Highlight contact on screen (Show contact popup)
      * @param contact
      */
@@ -68,13 +77,21 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
         if (contact != null) {
             Table table = searchResults.get(contact);
             if(table != null) {
-                for(Component component : componentToCoordinates.keySet()) {
-                    if(component instanceof Table) {
-                        ((Table)component).highlightContact(null);
-                    }
+                if(!multiple) {
+                    clearHighLights();
                 }
                 table.highlightContact(contact);
+            }
+        }
+    }
 
+    /**
+     * Clear highlighted contacts.
+     */
+    public void clearHighLights() {
+        for (Component component : componentToCoordinates.keySet()) {
+            if (component instanceof Table) {
+                ((Table) component).highlightContact(null);
             }
         }
     }

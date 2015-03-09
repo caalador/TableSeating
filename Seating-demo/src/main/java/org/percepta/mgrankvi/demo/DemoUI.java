@@ -42,6 +42,7 @@ public class DemoUI extends UI {
         final SeatingLayout component = new SeatingLayout("images/Room.png");
         component.setWidth("1280px");
         component.setHeight("1500px");
+        component.setMultiple(true);
 
         final TextField search = new TextField("Contact search");
         search.setImmediate(true);
@@ -49,15 +50,18 @@ public class DemoUI extends UI {
         Button searchButton = new Button("Search", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
+                component.clearHighLights();
                 List<Contact> contact = component.findContact(search.getValue());
                 if (contact.size() == 1) {
                     component.highlightContact(contact.get(0));
                 } else {
-                    StringBuilder sb = new StringBuilder();
+//                    StringBuilder sb = new StringBuilder();
                     for (Contact c : contact) {
-                        sb.append(c.name).append("\n");
+//                        sb.append(c.name).append("\n");
+                        component.highlightContact(contact.get(0));
                     }
-                    Notification.show("Multiple contacts found", sb.toString(), Notification.Type.HUMANIZED_MESSAGE);
+//                    Notification.show("Multiple contacts found", sb.toString(), Notification.Type.HUMANIZED_MESSAGE);
+
                 }
             }
         });
