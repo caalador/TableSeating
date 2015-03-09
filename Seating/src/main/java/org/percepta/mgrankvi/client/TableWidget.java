@@ -379,11 +379,7 @@ public class TableWidget extends SimplePanel {
         popupStyle.setLeft(x, Style.Unit.PX);
         popupStyle.setTop(y, Style.Unit.PX);
 
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-
-        ContactList.getContactRender(contact, builder);
-
-        popup.setInnerSafeHtml(builder.toSafeHtml());
+        popup.setInnerSafeHtml(contact.getContactRender().toSafeHtml());
 
         getParent().getElement().appendChild(popup);
     }

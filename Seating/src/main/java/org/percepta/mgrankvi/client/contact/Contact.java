@@ -1,5 +1,7 @@
 package org.percepta.mgrankvi.client.contact;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -61,5 +63,33 @@ public class Contact implements Serializable {
             return id.equals(other.id) && name.equals(other.name);
         }
         return false;
+    }
+
+    public SafeHtmlBuilder getContactRender() {
+        SafeHtmlBuilder safeHtmlBuilder = new SafeHtmlBuilder();
+
+        safeHtmlBuilder.appendHtmlConstant("<table width=\"100%\" height=\"65px\"><tr>");
+
+        safeHtmlBuilder.appendHtmlConstant("<td width=\"32px\" style=\"background-color: " + colour + ";\">");
+
+        if (image == null) {
+            safeHtmlBuilder.appendHtmlConstant("<img src=\"" + ContactList.defaultImage + "\" />");
+        } else {
+            safeHtmlBuilder.appendHtmlConstant("<img height=\"65px\" src=\"" + image + "\" />");
+        }
+
+        safeHtmlBuilder.appendHtmlConstant("</td>");
+
+        safeHtmlBuilder.appendHtmlConstant("<td width=\"100%\">");
+
+        safeHtmlBuilder.appendHtmlConstant("<div style=\"font-weight: bold;\">" + name + "</div>");
+        safeHtmlBuilder.appendHtmlConstant("<div>" + quote + "</div>");
+        safeHtmlBuilder.appendHtmlConstant("<div style=\"float: right;\">" + quotedPerson + "</div>");
+
+        safeHtmlBuilder.appendHtmlConstant("</td>");
+
+        safeHtmlBuilder.appendHtmlConstant("</tr></table>");
+
+        return safeHtmlBuilder;
     }
 }
