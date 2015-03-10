@@ -158,6 +158,7 @@ public class TableWidget extends SimplePanel {
     };
 
     protected void hideAllContactLists() {
+        contactList.scrollToTop();
         for (Element element : getElementsByClassName("contact-list", getParent().getElement())) {
             Style style = element.getStyle();
             style.setVisibility(Style.Visibility.HIDDEN);
