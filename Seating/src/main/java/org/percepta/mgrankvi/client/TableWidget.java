@@ -2,7 +2,6 @@ package org.percepta.mgrankvi.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
@@ -184,33 +183,6 @@ public class TableWidget extends SimplePanel {
         return chair;
     }
 
-    /**
-     * Set width of content
-     *
-     * @param width
-     */
-    public void setWidth(int width) {
-//        style.setWidth(width, Style.Unit.PX);
-    }
-
-    /**
-     * Set height of content
-     *
-     * @param height
-     */
-    public void setHeight(int height) {
-        style.setHeight(height, Style.Unit.PX);
-    }
-
-    /**
-     * Set top position.
-     *
-     * @param top
-     */
-    public void setTop(int top) {
-        style.setTop(top, Style.Unit.PX);
-    }
-
     public void rotate(int rotateDeg) {
         rotation = rotateDeg;
         addStyleVersions(style, "transform", "rotate(" + rotateDeg + "deg)");
@@ -356,6 +328,7 @@ public class TableWidget extends SimplePanel {
         if (rotation != 0) {
             int elementDiff = elementTop - getElement().getAbsoluteTop();
             y = elementTop + seatSize - (elementTop - (chair.getAbsoluteTop() + elementDiff));
+            y += Math.cos(rotation) * seatSize;
         }
 
         if (chair.getAbsoluteLeft() + LIST_WIDTH > Window.getClientWidth()) {
