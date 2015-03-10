@@ -331,8 +331,8 @@ public class TableWidget extends SimplePanel {
             y += Math.cos(rotation) * seatSize;
         }
 
-        if (chair.getAbsoluteLeft() + LIST_WIDTH > Window.getClientWidth()) {
-            int offset = chair.getAbsoluteLeft() + LIST_WIDTH - Window.getClientWidth();
+        if (x + LIST_WIDTH > getParent().getOffsetWidth()) {
+            int offset = x + LIST_WIDTH - getParent().getOffsetWidth();
             x -= (offset + 20);
         }
 
