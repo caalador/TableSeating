@@ -3,6 +3,6 @@ package org.percepta.mgrankvi.client;
 /**
  *
  */
-public enum SeatFillDirection {
+public enum TableSeatFillDirection {
     FIRST, LAST
 }

@@ -7,7 +7,6 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -15,7 +14,7 @@ import org.percepta.mgrankvi.Colours;
 import org.percepta.mgrankvi.Position;
 import org.percepta.mgrankvi.SeatingLayout;
 import org.percepta.mgrankvi.Table;
-import org.percepta.mgrankvi.client.SeatFillDirection;
+import org.percepta.mgrankvi.client.TableSeatFillDirection;
 import org.percepta.mgrankvi.client.TableSeatPlacing;
 import org.percepta.mgrankvi.client.contact.Contact;
 
@@ -88,7 +87,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(60, 200));
 
         table = new Table(10, 130);
-        table.setFillDirection(SeatFillDirection.FIRST);
+        table.setFillDirection(TableSeatFillDirection.FIRST);
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));

@@ -35,7 +35,7 @@ public class TableWidget extends SimplePanel {
     private int tableWidth = 100;
     private TableSeatPlacing seatPlacing;
 
-    private static int LIST_WIDTH = 300;
+    private int LIST_WIDTH = 300;
 
     private List<Element> seats = new LinkedList<>();
     private List<Contact> seating = new LinkedList<>();
@@ -49,7 +49,7 @@ public class TableWidget extends SimplePanel {
 
     private Element contactHolder;
 
-    private SeatFillDirection fillDirection;
+    private TableSeatFillDirection fillDirection;
 
     public TableWidget() {
         content = DOM.createDiv();
@@ -216,7 +216,7 @@ public class TableWidget extends SimplePanel {
         int lastSeat = 0;
 
         int realSeats = seating.size();
-        if (fillDirection.equals(SeatFillDirection.FIRST) && emptySeats > 0) {
+        if (fillDirection.equals(TableSeatFillDirection.FIRST) && emptySeats > 0) {
             for (; lastSeat < emptySeats; lastSeat++) {
                 position = createEmptySeat(position, lastSeat);
             }
@@ -255,7 +255,7 @@ public class TableWidget extends SimplePanel {
             content.appendChild(chair);
         }
 
-        if (fillDirection.equals(SeatFillDirection.LAST) && emptySeats > 0) {
+        if (fillDirection.equals(TableSeatFillDirection.LAST) && emptySeats > 0) {
             for (; lastSeat < seatAmount; lastSeat++) {
                 position = createEmptySeat(position, lastSeat);
             }
@@ -414,7 +414,7 @@ public class TableWidget extends SimplePanel {
         }
     }
 
-    public void setFillDirection(SeatFillDirection fillDirection) {
+    public void setFillDirection(TableSeatFillDirection fillDirection) {
         this.fillDirection = fillDirection;
     }
 
