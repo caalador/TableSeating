@@ -12,6 +12,7 @@ import com.vaadin.client.VConsole;
 import org.percepta.mgrankvi.client.contact.Contact;
 import org.percepta.mgrankvi.client.contact.ContactHandler;
 import org.percepta.mgrankvi.client.contact.ContactList;
+import org.percepta.mgrankvi.preloader.client.image.ImagePreloader;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ public class TableWidget extends SimplePanel {
     private Style style, contactHolderStyle;
     private ContactList contactList;
     private Element content, popup;
+
+    private static ImagePreloader imagePreloader = new ImagePreloader();
 
     private int seatSize = 50;
     private int tableHeight = 100;
@@ -206,6 +209,11 @@ public class TableWidget extends SimplePanel {
             seatAmount = seating.size();
         }
         contactList.addData(seating);
+        for(Contact contact: seating) {
+            if(contact.image != null && !contact.image.isEmpty()) {
+                imagePreloader.preloadImage(contact.image);
+            }
+        }
 
         createSeatsAndSetTableWidth(seating);
     }
