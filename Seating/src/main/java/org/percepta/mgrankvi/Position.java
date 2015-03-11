@@ -3,7 +3,9 @@ package org.percepta.mgrankvi;
 import java.io.Serializable;
 
 /**
- * * @author Mikael Grankvist - Vaadin }>
+ * Position of component containing top and left position in relation to parent.
+ *
+ * @author Mikael Grankvist - Vaadin }>
  */
 public class Position implements Serializable {
 

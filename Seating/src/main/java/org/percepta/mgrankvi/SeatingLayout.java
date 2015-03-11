@@ -15,6 +15,7 @@ import java.util.Map;
 
 /**
  *
+ * @author Mikael Grankvist - Vaadin }>
  */
 public class SeatingLayout extends AbstractLayout implements HasComponents {
 
@@ -23,10 +24,16 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
     private Map<Contact, Table> searchResults = new HashMap<>();
     private boolean multiple = false;
 
+    public SeatingLayout() {}
+
     public SeatingLayout(String image) {
         getState().image = image;
     }
 
+    /**
+     * Set the image for our "Layout".
+     * @param image url to image
+     */
     public void setImage(String image) {
         getState().image = image;
     }

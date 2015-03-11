@@ -1,7 +1,7 @@
 package org.percepta.mgrankvi;
 
 /**
- *
+ * Css colours by name in a string array.
  */
 public class Colours {
 
