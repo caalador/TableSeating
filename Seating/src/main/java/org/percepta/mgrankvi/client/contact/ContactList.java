@@ -25,8 +25,6 @@ public class ContactList extends ScrollPanel {
 
     /**
      * Clear list and input new data.
-     *
-     * @param contacts
      */
     public void addData(List<Contact> contacts) {
         for (final Contact contact : contacts) {

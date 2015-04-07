@@ -37,7 +37,6 @@ public class TableWidget extends SimplePanel {
 
     private int seatSize = 50;
     private int tableHeight = 100;
-    private int tableWidth = 100;
     private TableSeatPlacing seatPlacing;
 
     private int LIST_WIDTH = 300;
@@ -64,28 +63,14 @@ public class TableWidget extends SimplePanel {
         style = content.getStyle();
         style.setPosition(Style.Position.RELATIVE);
         style.setTop(0, Style.Unit.PX);
-        style.setWidth(tableWidth, Style.Unit.PX);
+        style.setWidth(2 * seatSize, Style.Unit.PX);
         style.setHeight(tableHeight, Style.Unit.PX);
 
         tableName = DOM.createLabel();
-        Style s = tableName.getStyle();
-        s.setPosition(Style.Position.RELATIVE);
-        s.setTop(50, Style.Unit.PCT);
-        addStyleVersions(s, "transform", "translateY(-50%)");
-        s.setDisplay(Style.Display.BLOCK);
-        s.setProperty("margin-left", "auto");
-        s.setProperty("margin-right", "auto");
+        setTableNameStyles();
 
         Element table = DOM.createDiv();
-        Style st = table.getStyle();
-        st.setZIndex(51);
-        st.setPosition(Style.Position.ABSOLUTE);
-        st.setBorderColor("BLACK");
-        st.setBorderWidth(1.0, Style.Unit.PX);
-        st.setBorderStyle(Style.BorderStyle.SOLID);
-        st.setBackgroundColor("WHITE");
-        st.setWidth(100, Style.Unit.PCT);
-        st.setHeight(100, Style.Unit.PCT);
+        setTableStyles(table);
 
         table.appendChild(tableName);
         content.appendChild(table);
@@ -99,6 +84,35 @@ public class TableWidget extends SimplePanel {
 
         contactHolderStyle = contactHolder.getStyle();
 
+        setContactHolderStyles();
+
+        Event.sinkEvents(table, Event.ONCLICK);
+        Event.setEventListener(table, showListPopupListener);
+    }
+
+    protected void setTableNameStyles() {
+        Style s = tableName.getStyle();
+        s.setPosition(Style.Position.RELATIVE);
+        s.setTop(50, Style.Unit.PCT);
+        addStyleVersions(s, "transform", "translateY(-50%)");
+        s.setDisplay(Style.Display.BLOCK);
+        s.setProperty("margin-left", "auto");
+        s.setProperty("margin-right", "auto");
+    }
+
+    protected void setTableStyles(Element table) {
+        Style st = table.getStyle();
+        st.setZIndex(51);
+        st.setPosition(Style.Position.ABSOLUTE);
+        st.setBorderColor("BLACK");
+        st.setBorderWidth(1.0, Style.Unit.PX);
+        st.setBorderStyle(Style.BorderStyle.SOLID);
+        st.setBackgroundColor("WHITE");
+        st.setWidth(100, Style.Unit.PCT);
+        st.setHeight(100, Style.Unit.PCT);
+    }
+
+    protected void setContactHolderStyles() {
         contactHolderStyle.setPosition(Style.Position.ABSOLUTE);
         contactHolderStyle.setZIndex(59);
 
@@ -116,9 +130,6 @@ public class TableWidget extends SimplePanel {
 
         addStyleVersions(contactHolderStyle, "transition", "all 1s ease");
         addStyleVersions(contactHolderStyle, "transitionProperty", "top, left, height, width");
-
-        Event.sinkEvents(table, Event.ONCLICK);
-        Event.setEventListener(table, showListPopupListener);
     }
 
     @Override
@@ -389,6 +400,14 @@ public class TableWidget extends SimplePanel {
             popup = null;
         }
         popup = DOM.createDiv();
+        setPopupStyle(x, y);
+
+        popup.setInnerSafeHtml(contact.getContactRender().toSafeHtml());
+
+        getParent().getElement().appendChild(popup);
+    }
+
+    private void setPopupStyle(int x, int y) {
         Style popupStyle = popup.getStyle();
         popupStyle.setWidth(LIST_WIDTH, Style.Unit.PX);
         popupStyle.setZIndex(60);
@@ -399,10 +418,6 @@ public class TableWidget extends SimplePanel {
         popupStyle.setBackgroundColor("white");
         popupStyle.setLeft(x, Style.Unit.PX);
         popupStyle.setTop(y, Style.Unit.PX);
-
-        popup.setInnerSafeHtml(contact.getContactRender().toSafeHtml());
-
-        getParent().getElement().appendChild(popup);
     }
 
     public void setSeatPlacing(TableSeatPlacing seatPlacing) {

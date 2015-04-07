@@ -20,9 +20,8 @@ public class Table extends AbstractComponent {
 
     private List<Contact> contacts = Lists.newLinkedList();
 
-    public Table(int seats, int maxHeight) {
+    public Table(int seats) {
         getState().seats = seats;
-        getState().maxHeight = maxHeight;
     }
 
     @Override
@@ -32,8 +31,6 @@ public class Table extends AbstractComponent {
 
     /**
      * Give the table a name for identification
-     *
-     * @param name
      */
     public void setTableName(String name) {
         if (name == null) {

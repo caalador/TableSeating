@@ -18,7 +18,16 @@ public class Contact implements Serializable {
 
     public String colour = "";
 
-    public Contact() {}
+    public Contact() {
+    }
+
+    public Contact(String id, String name) {
+        this(id, name, null);
+    }
+
+    public Contact(String id, String name, String image) {
+        this(id, name, image, Integer.toHexString((int) (Math.random() * 0x1000000)), null, null);
+    }
 
     public Contact(String id, String name, String image, String colour, String quote, String quotedPerson) {
         this.id = id;
