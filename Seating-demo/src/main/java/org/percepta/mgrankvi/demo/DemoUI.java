@@ -84,6 +84,7 @@ public class DemoUI extends UI {
     private void populateRoom(SeatingLayout component) {
         int i = 0;
         Table table = new Table(10, 130);
+        table.setTableName("A");
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -100,6 +101,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(60, 200));
 
         table = new Table(10, 130);
+        table.setTableName("C");
         table.setFillDirection(TableSeatFillDirection.FIRST);
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -114,6 +116,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(60, 450));
 
         table = new Table(10, 130);
+        table.setTableName("E");
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -127,6 +130,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(60, 750));
 
         table = new Table(10, 130);
+        table.setTableName("G");
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -143,6 +147,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(60, 1000));
 
         table = new Table(10, 130);
+        table.setTableName("B");
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -159,6 +164,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(890, 200));
 
         table = new Table(10, 130);
+        table.setTableName("D");
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -175,6 +181,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(890, 450));
 
         table = new Table(10, 130);
+        table.setTableName("F");
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -191,6 +198,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(890, 750));
 
         table = new Table(10, 130);
+        table.setTableName("H");
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -207,6 +215,7 @@ public class DemoUI extends UI {
         component.addComponent(table, new Position(890, 1000));
 
         table = new Table(2, 130);
+        table.setTableName("Main Table");
         table.addContact(new Contact(Contact.uuid(), "Bride", null, Colours.cssColours[i++], "We loved with a love that was more than love.", "Edgar Allan Poe"));
         table.addContact(new Contact(Contact.uuid(), "Groom", "VAADIN/images/gloom.png", Colours.cssColours[i++], "The sweetest of all sounds is that of the voice of the woman we love.", "Jean de la Bruyere"));
 

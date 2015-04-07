@@ -31,6 +31,18 @@ public class Table extends AbstractComponent {
     }
 
     /**
+     * Give the table a name for identification
+     *
+     * @param name
+     */
+    public void setTableName(String name) {
+        if (name == null) {
+            name = "";
+        }
+        getState().name = name;
+    }
+
+    /**
      * Rotate table given degrees
      *
      * @param rotation degrees to rotate table
@@ -112,6 +124,15 @@ public class Table extends AbstractComponent {
             }
         }
         return matchingContacts;
+    }
+
+    /**
+     * Get all contacts for table.
+     *
+     * @return Contact list.
+     */
+    public List<Contact> getContacts() {
+        return Lists.newArrayList(contacts);
     }
 
     /**

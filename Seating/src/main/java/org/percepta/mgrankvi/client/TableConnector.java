@@ -68,4 +68,9 @@ public class TableConnector extends AbstractComponentConnector {
     void setFillDirection() {
         getWidget().setFillDirection(getState().fillDirection);
     }
+
+    @OnStateChange("name")
+    void setName() {
+        getWidget().setTableName(getState().name);
+    }
 }

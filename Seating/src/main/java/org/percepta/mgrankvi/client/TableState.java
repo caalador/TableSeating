@@ -9,6 +9,9 @@ import java.util.List;
 public class TableState extends AbstractComponentState {
 
     public int seats = 0;
+
+    public String name = "";
+
     public TableSeatFillDirection fillDirection = TableSeatFillDirection.LAST;
 
     public int maxHeight = 0;

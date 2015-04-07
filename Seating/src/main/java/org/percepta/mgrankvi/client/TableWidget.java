@@ -1,6 +1,8 @@
 package org.percepta.mgrankvi.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -54,6 +56,8 @@ public class TableWidget extends SimplePanel {
 
     private TableSeatFillDirection fillDirection;
 
+    private final Element tableName;
+
     public TableWidget() {
         content = DOM.createDiv();
         getElement().appendChild(content);
@@ -62,6 +66,15 @@ public class TableWidget extends SimplePanel {
         style.setTop(0, Style.Unit.PX);
         style.setWidth(tableWidth, Style.Unit.PX);
         style.setHeight(tableHeight, Style.Unit.PX);
+
+        tableName = DOM.createLabel();
+        Style s = tableName.getStyle();
+        s.setPosition(Style.Position.RELATIVE);
+        s.setTop(50, Style.Unit.PCT);
+        addStyleVersions(s, "transform", "translateY(-50%)");
+        s.setDisplay(Style.Display.BLOCK);
+        s.setProperty("margin-left", "auto");
+        s.setProperty("margin-right", "auto");
 
         Element table = DOM.createDiv();
         Style st = table.getStyle();
@@ -73,6 +86,8 @@ public class TableWidget extends SimplePanel {
         st.setBackgroundColor("WHITE");
         st.setWidth(100, Style.Unit.PCT);
         st.setHeight(100, Style.Unit.PCT);
+
+        table.appendChild(tableName);
         content.appendChild(table);
 
         contactList = new ContactList();
@@ -205,17 +220,41 @@ public class TableWidget extends SimplePanel {
     }
 
     public void addContacts(List<Contact> seating) {
-        if(seatAmount < seating.size()) {
+        if (seatAmount < seating.size()) {
             seatAmount = seating.size();
         }
         contactList.addData(seating);
-        for(Contact contact: seating) {
-            if(contact.image != null && !contact.image.isEmpty()) {
+        for (Contact contact : seating) {
+            if (contact.image != null && !contact.image.isEmpty()) {
                 imagePreloader.preloadImage(contact.image);
             }
         }
 
         createSeatsAndSetTableWidth(seating);
+    }
+
+    public void setTableName(String name) {
+        tableName.setInnerText(name);
+        tableName.getStyle().clearWidth();
+
+
+        final Element elem = DOM.createDiv();
+        Document.get().getBody().appendChild(elem);
+        elem.getStyle().setPosition(Style.Position.ABSOLUTE);
+        elem.getStyle().setLeft(-1000, Style.Unit.PX);
+        elem.getStyle().setTop(-1000, Style.Unit.PX);
+        elem.getStyle().setVisibility(Style.Visibility.HIDDEN);
+        elem.getStyle().clearWidth();
+        elem.setInnerHTML(name);
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+
+                tableName.getStyle().setWidth(elem.getOffsetWidth(), Style.Unit.PX);
+                Document.get().getBody().removeChild(elem);
+            }
+        });
     }
 
     private void createSeatsAndSetTableWidth(List<Contact> seating) {
@@ -398,7 +437,7 @@ public class TableWidget extends SimplePanel {
     public void setSeatAmount(int seatAmount) {
         this.seatAmount = seatAmount;
 
-        if(seatAmount < seating.size()) {
+        if (seatAmount < seating.size()) {
             this.seatAmount = seating.size();
         }
     }
