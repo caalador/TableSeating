@@ -170,7 +170,8 @@ public class DemoUI extends UI {
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
-        table.addContact(createContact(i++));
+        table.addContact(new Contact());
+//        table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));

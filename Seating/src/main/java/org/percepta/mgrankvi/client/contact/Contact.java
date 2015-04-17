@@ -19,6 +19,7 @@ public class Contact implements Serializable {
     public String colour = "";
 
     public Contact() {
+        id = uuid();
     }
 
     public Contact(String id, String name) {

@@ -282,8 +282,15 @@ public class TableWidget extends SimplePanel {
         }
 
         for (int i = 0; lastSeat < realSeats; lastSeat++) {
-            Element chair = createChair();
             Contact contact = seating.get(i++);
+
+            // Create empty seat for customer without a name
+            if(contact.name.isEmpty()) {
+                position = createEmptySeat(position, lastSeat);
+                continue;
+            }
+
+            Element chair = createChair();
             seatingMap.put(contact, chair);
             idContact.put(contact.id, contact);
             seats.add(chair);
