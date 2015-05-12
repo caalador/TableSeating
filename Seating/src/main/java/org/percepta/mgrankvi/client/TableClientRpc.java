@@ -8,6 +8,6 @@ import org.percepta.mgrankvi.client.contact.Contact;
  */
 public interface TableClientRpc extends ClientRpc {
 
-    public void highlightContact(Contact contact);
+    void highlightContact(Contact contact);
 
 }

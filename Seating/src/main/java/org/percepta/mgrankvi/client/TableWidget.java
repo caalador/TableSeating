@@ -31,7 +31,7 @@ public class TableWidget extends SimplePanel {
 
     private Style style, contactHolderStyle;
     private ContactList contactList;
-    private Element content, popup;
+    private Element content, popup, popupChair;
 
     private static ImagePreloader imagePreloader = new ImagePreloader();
 
@@ -380,6 +380,11 @@ public class TableWidget extends SimplePanel {
                     if (popup != null) {
                         getParent().getElement().removeChild(popup);
                         popup = null;
+
+                        if(popupChair != null) {
+                            popupChair.getStyle().setZIndex(40);
+                            popupChair = null;
+                        }
                     }
                 }
             }
@@ -408,11 +413,18 @@ public class TableWidget extends SimplePanel {
         if (popup != null) {
             getParent().getElement().removeChild(popup);
             popup = null;
+
+            if(popupChair != null) {
+                popupChair.getStyle().setZIndex(40);
+                popupChair = null;
+            }
         }
         popup = DOM.createDiv();
         setPopupStyle(x, y);
 
         popup.setInnerSafeHtml(contact.getContactRender().toSafeHtml());
+        chair.getStyle().setZIndex(55);
+        popupChair = chair;
 
         getParent().getElement().appendChild(popup);
     }
@@ -486,6 +498,10 @@ public class TableWidget extends SimplePanel {
         if (popup != null) {
             getParent().getElement().removeChild(popup);
             popup = null;
+            if(popupChair != null) {
+                popupChair.getStyle().setZIndex(40);
+                popupChair = null;
+            }
         }
     }
 
