@@ -85,6 +85,7 @@ public class DemoUI extends UI {
         int i = 0;
         Table table = new Table(10);
         table.setTableName("A");
+        table.setSeatSize(40);
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -102,6 +103,7 @@ public class DemoUI extends UI {
 
         table = new Table(10);
         table.setTableName("C");
+        table.setSeatSize(60);
         table.setFillDirection(TableSeatFillDirection.FIRST);
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));

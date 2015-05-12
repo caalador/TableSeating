@@ -57,6 +57,9 @@ public class TableWidget extends SimplePanel {
 
     private final Element tableName;
 
+    private int seatOffsetTop = (int) Math.ceil(seatSize * 0.6);
+    private int seatOffsetBottom = (int) Math.ceil(seatSize * 0.4);
+
     public TableWidget() {
         content = DOM.createDiv();
         getElement().appendChild(content);
@@ -301,16 +304,16 @@ public class TableWidget extends SimplePanel {
 
             switch (seatPlacing) {
                 case ALL_DOWN:
-                    s.setTop(tableHeight - 20, Style.Unit.PX);
+                    s.setTop(tableHeight - seatOffsetBottom, Style.Unit.PX);
                     position += 10 + seatSize;
                     break;
                 case ALL_UP:
-                    s.setTop(-30, Style.Unit.PX);
+                    s.setTop(-seatOffsetTop, Style.Unit.PX);
                     position += 10 + seatSize;
                     break;
                 case EQUAL:
                 default:
-                    s.setTop(lastSeat % 2 == 0 ? -30 : tableHeight - 20, Style.Unit.PX);
+                    s.setTop(lastSeat % 2 == 0 ? -seatOffsetTop : tableHeight - seatOffsetBottom, Style.Unit.PX);
                     // move position after we have added a chair to the bottom.
                     if (lastSeat % 2 == 1) {
                         position += 10 + seatSize;
@@ -338,16 +341,16 @@ public class TableWidget extends SimplePanel {
 
         switch (seatPlacing) {
             case ALL_DOWN:
-                s.setTop(tableHeight - 20, Style.Unit.PX);
+                s.setTop(tableHeight - seatOffsetBottom, Style.Unit.PX);
                 position += 10 + seatSize;
                 break;
             case ALL_UP:
-                s.setTop(-30, Style.Unit.PX);
+                s.setTop(-seatOffsetTop, Style.Unit.PX);
                 position += 10 + seatSize;
                 break;
             case EQUAL:
             default:
-                s.setTop(i % 2 == 0 ? -30 : tableHeight - 20, Style.Unit.PX);
+                s.setTop(i % 2 == 0 ? -seatOffsetTop : tableHeight - seatOffsetBottom, Style.Unit.PX);
                 // move position after we have added a chair to the bottom.
                 if (i % 2 == 1) {
                     position += 10 + seatSize;
@@ -437,6 +440,9 @@ public class TableWidget extends SimplePanel {
 
     public void setSeatSize(int seatSize) {
         if (seatSize != this.seatSize) {
+            seatOffsetTop = (int) Math.ceil(seatSize * 0.6);
+            seatOffsetBottom = (int) Math.ceil(seatSize * 0.4);
+
             this.seatSize = seatSize;
 
             tableHeight = seatSize * 2;
