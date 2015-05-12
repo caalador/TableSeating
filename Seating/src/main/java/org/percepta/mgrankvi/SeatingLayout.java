@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Mikael Grankvist - Vaadin }>
  */
 public class SeatingLayout extends AbstractLayout implements HasComponents {
@@ -24,7 +23,8 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
     private Map<Contact, Table> searchResults = new HashMap<>();
     private boolean multiple = false;
 
-    public SeatingLayout() {}
+    public SeatingLayout() {
+    }
 
     public SeatingLayout(String image) {
         getState().image = image;
@@ -32,6 +32,7 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
 
     /**
      * Set the image for our "Layout".
+     *
      * @param image url to image
      */
     public void setImage(String image) {
@@ -69,7 +70,45 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
     }
 
     /**
+     * Get all contacts for all tables.
+     * @return
+     */
+    public List<Contact> getContacts() {
+        List<Contact> contacts = Lists.newLinkedList();
+        for (Component component : componentToCoordinates.keySet()) {
+            if (component instanceof Table) {
+                Table table = (Table) component;
+                contacts.addAll(table.getContacts());
+            }
+        }
+        return contacts;
+    }
+
+    /**
+     * Find table that belongs to contact
+     * @param contact
+     * @return
+     */
+    public Table getTableForContact(Contact contact) {
+        if (searchResults.containsKey(contact)) {
+            return searchResults.get(contact);
+        } else {
+
+            for (Component component : componentToCoordinates.keySet()) {
+                if (component instanceof Table) {
+                    if(((Table)component).getContacts().contains(contact)){
+                        searchResults.put(contact, (Table) component);
+                        return (Table) component;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Allow showing multiple highlights at one time
+     *
      * @param multiple
      */
     public void setMultiple(boolean multiple) {
@@ -78,13 +117,14 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
 
     /**
      * Highlight contact on screen (Show contact popup)
+     *
      * @param contact
      */
     public void highlightContact(Contact contact) {
         if (contact != null) {
             Table table = searchResults.get(contact);
-            if(table != null) {
-                if(!multiple) {
+            if (table != null) {
+                if (!multiple) {
                     clearHighLights();
                 }
                 table.highlightContact(contact);
