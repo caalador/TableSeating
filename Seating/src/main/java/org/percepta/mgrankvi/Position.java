@@ -15,7 +15,7 @@ public class Position implements Serializable {
     public Position() {
     }
 
-    public Position(Integer topValue, Integer leftValue) {
+    public Position(Integer leftValue, Integer topValue) {
         this.topValue = topValue;
         this.leftValue = leftValue;
     }
@@ -37,6 +37,6 @@ public class Position implements Serializable {
     }
 
     public Integer[] toArray() {
-        return new Integer[]{topValue, leftValue};
+        return new Integer[]{leftValue, topValue};
     }
 }
