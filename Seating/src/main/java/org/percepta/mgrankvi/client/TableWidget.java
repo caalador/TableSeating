@@ -99,8 +99,8 @@ public class TableWidget extends SimplePanel {
         s.setTop(50, Style.Unit.PCT);
         addStyleVersions(s, "transform", "translateY(-50%)");
         s.setDisplay(Style.Display.BLOCK);
-        s.setProperty("margin-left", "auto");
-        s.setProperty("margin-right", "auto");
+        s.setProperty("marginLeft", "auto");
+        s.setProperty("marginRight", "auto");
     }
 
     protected void setTableStyles(Element table) {

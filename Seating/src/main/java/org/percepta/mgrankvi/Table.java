@@ -43,16 +43,6 @@ public class Table extends AbstractComponent {
         return getState().name;
     }
 
-    @Override
-    public String getCaption() {
-        return getTableName();
-    }
-
-    @Override
-    public void setCaption(String caption) {
-        getState().name = caption;
-    }
-
     /**
      * Rotate table given degrees
      *
