@@ -75,7 +75,7 @@ public class SeatingLayoutConnector extends AbstractHasComponentsConnector imple
 
     @Override
     public void updateCaption(ComponentConnector component) {
-        boolean captionIsNeeded = VCaption.isNeeded(component.getState());
+        boolean captionIsNeeded = VCaption.isNeeded(component);
 
         if (captionIsNeeded) {
 

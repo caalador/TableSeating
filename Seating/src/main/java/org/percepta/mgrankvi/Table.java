@@ -1,15 +1,16 @@
 package org.percepta.mgrankvi;
 
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
-import com.vaadin.ui.AbstractComponent;
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import org.percepta.mgrankvi.client.TableClientRpc;
 import org.percepta.mgrankvi.client.TableSeatFillDirection;
 import org.percepta.mgrankvi.client.TableSeatPlacing;
 import org.percepta.mgrankvi.client.TableState;
 import org.percepta.mgrankvi.client.contact.Contact;
 
-import java.util.Arrays;
-import java.util.List;
+import com.vaadin.ui.AbstractComponent;
 
 /**
  * Table with seats visualisation
@@ -46,17 +47,19 @@ public class Table extends AbstractComponent {
     /**
      * Rotate table given degrees
      *
-     * @param rotation degrees to rotate table
+     * @param rotation
+     *            degrees to rotate table
      */
     public void setTableRotation(int rotation) {
         getState().rotateDeg = rotation;
     }
 
     /**
-     * Add a new contact to table
-     * Note. Contacts will be seated in the order they are given in.
+     * Add a new contact to table Note. Contacts will be seated in the order
+     * they are given in.
      *
-     * @param contact Contact to add to table
+     * @param contact
+     *            Contact to add to table
      */
     public void addContact(Contact contact) {
         getState().seating.add(contact);
@@ -71,10 +74,11 @@ public class Table extends AbstractComponent {
     }
 
     /**
-     * Add new contacts to table
-     * Note. Contacts will be seated in the order they are given in.
+     * Add new contacts to table Note. Contacts will be seated in the order they
+     * are given in.
      *
-     * @param contacts Contacts to add to table
+     * @param contacts
+     *            Contacts to add to table
      */
     public void addContacts(Contact... contacts) {
         getState().seating.addAll(Arrays.asList(contacts));
@@ -87,7 +91,8 @@ public class Table extends AbstractComponent {
     /**
      * Set the seat Placing scheme for table
      *
-     * @param placing Way seats should be placed around the table
+     * @param placing
+     *            Way seats should be placed around the table
      */
     public void setTableSeatPlacing(TableSeatPlacing placing) {
         getState().placing = placing;
@@ -96,7 +101,8 @@ public class Table extends AbstractComponent {
     /**
      * Set the seat size in px
      *
-     * @param sizeInPx Seat size (rectangle)
+     * @param sizeInPx
+     *            Seat size (rectangle)
      */
     public void setSeatSize(int sizeInPx) {
         getState().seatSize = sizeInPx;
@@ -105,7 +111,8 @@ public class Table extends AbstractComponent {
     /**
      * Enable/disable the hover feature for chair contacts.
      *
-     * @param onHover Chair on hover enabled
+     * @param onHover
+     *            Chair on hover enabled
      */
     public void setShowOnHover(boolean onHover) {
         getState().enableOnHover = onHover;
@@ -114,7 +121,8 @@ public class Table extends AbstractComponent {
     /**
      * Search for contact with name.
      *
-     * @param name Name (or part of name) of contact
+     * @param name
+     *            Name (or part of name) of contact
      * @return All contacts whose name contains given name.
      */
     public List<Contact> findContact(String name) {
@@ -139,11 +147,13 @@ public class Table extends AbstractComponent {
     /**
      * Highlight (show popup for) given contact on screen
      *
-     * @param contact Contact whose seat to highlight
+     * @param contact
+     *            Contact whose seat to highlight
      */
     public void highlightContact(Contact contact) {
         getRpcProxy(TableClientRpc.class).highlightContact(contact);
     }
+
     public void highlightContacts(List<Contact> contact) {
         getRpcProxy(TableClientRpc.class).highlightContacts(contact);
     }

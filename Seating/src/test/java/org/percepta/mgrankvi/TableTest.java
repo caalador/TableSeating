@@ -1,6 +1,6 @@
 package org.percepta.mgrankvi;
 
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
+import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.percepta.mgrankvi.client.contact.Contact;
@@ -9,7 +9,8 @@ import java.util.List;
 
 public class TableTest {
 
-    List<Contact> contacts = Lists.newArrayList(new Contact(Contact.uuid(), "Single Person"),
+    List<Contact> contacts = Lists
+            .newArrayList(new Contact(Contact.uuid(), "Single Person"),
             new Contact(Contact.uuid(), "Tripplets One"),
             new Contact(Contact.uuid(), "Tripplets Two"),
             new Contact(Contact.uuid(), "Tripplets Three"));

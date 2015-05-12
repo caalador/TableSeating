@@ -1,6 +1,6 @@
 package org.percepta.mgrankvi;
 
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
+import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,7 +10,8 @@ import java.util.List;
 
 public class SeatingLayoutTest {
 
-    List<Contact> contacts = Lists.newArrayList(new Contact(Contact.uuid(), "Single Person"),
+    List<Contact> contacts = Lists
+            .newArrayList(new Contact(Contact.uuid(), "Single Person"),
             new Contact(Contact.uuid(), "Tripplets One"),
             new Contact(Contact.uuid(), "Tripplets Two"),
             new Contact(Contact.uuid(), "Tripplets Three"));

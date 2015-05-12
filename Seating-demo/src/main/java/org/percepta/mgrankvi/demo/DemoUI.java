@@ -1,19 +1,9 @@
 package org.percepta.mgrankvi.demo;
 
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import javax.servlet.annotation.WebServlet;
+import java.util.List;
+import java.util.Random;
+
 import org.percepta.mgrankvi.Colours;
 import org.percepta.mgrankvi.Position;
 import org.percepta.mgrankvi.SeatingLayout;
@@ -22,9 +12,19 @@ import org.percepta.mgrankvi.client.TableSeatFillDirection;
 import org.percepta.mgrankvi.client.TableSeatPlacing;
 import org.percepta.mgrankvi.client.contact.Contact;
 
-import javax.servlet.annotation.WebServlet;
-import java.util.List;
-import java.util.Random;
+import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Title;
+import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 @Theme("demo")
 @Title("MyComponent Add-on Demo")
@@ -41,7 +41,6 @@ public class DemoUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
 
-
         // Initialize our new UI component
         final SeatingLayout component = new SeatingLayout("images/Room.png");
         component.setWidth("1280px");
@@ -49,20 +48,17 @@ public class DemoUI extends UI {
         component.setMultiple(true);
 
         final TextField search = new TextField("Contact search");
-        search.setImmediate(true);
         search.setWidth("125px");
-        Button searchButton = new Button("Search", new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                component.clearHighLights();
-                List<Contact> contact = component.findContact(search.getValue());
-                if (contact.size() == 1) {
-                    component.highlightContact(contact.get(0));
-                } else if(contact.size() > 1) {
-                    buildMultiselectionWindow(contact, component);
-                } else {
-                    Notification.show("No contact found for search string: " + search.getValue());
-                }
+        Button searchButton = new Button("Search", clickEvent -> {
+            component.clearHighLights();
+            List<Contact> contact = component.findContact(search.getValue());
+            if (contact.size() == 1) {
+                component.highlightContact(contact.get(0));
+            } else if (contact.size() > 1) {
+                buildMultiselectionWindow(contact, component);
+            } else {
+                Notification.show("No contact found for search string: "
+                        + search.getValue());
             }
         });
 
@@ -74,7 +70,6 @@ public class DemoUI extends UI {
         // Show it in the middle of the screen
         final VerticalLayout layout = new VerticalLayout();
         layout.setStyleName("demoContentLayout");
-        layout.setSizeFull();
         layout.addComponent(component);
         layout.setComponentAlignment(component, Alignment.MIDDLE_CENTER);
         setContent(layout);
@@ -173,7 +168,7 @@ public class DemoUI extends UI {
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(new Contact());
-//        table.addContact(createContact(i++));
+        // table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
         table.addContact(createContact(i++));
@@ -219,36 +214,39 @@ public class DemoUI extends UI {
 
         table = new Table(2);
         table.setTableName("Main Table");
-        table.addContact(new Contact(Contact.uuid(), "Bride", null, Colours.cssColours[i++], "We loved with a love that was more than love.", "Edgar Allan Poe"));
-        table.addContact(new Contact(Contact.uuid(), "Groom", "VAADIN/images/gloom.png", Colours.cssColours[i++], "The sweetest of all sounds is that of the voice of the woman we love.", "Jean de la Bruyere"));
+        table.addContact(new Contact(Contact.uuid(), "Bride", null,
+                Colours.cssColours[i++],
+                "We loved with a love that was more than love.",
+                "Edgar Allan Poe"));
+        table.addContact(new Contact(Contact.uuid(), "Groom",
+                "VAADIN/images/gloom.png", Colours.cssColours[i++],
+                "The sweetest of all sounds is that of the voice of the woman we love.",
+                "Jean de la Bruyere"));
 
         table.setTableSeatPlacing(TableSeatPlacing.ALL_UP);
 
         component.addComponent(table, new Position(560, 80));
     }
 
-    protected void buildMultiselectionWindow(List<Contact> contact, final SeatingLayout component) {
+    protected void buildMultiselectionWindow(List<Contact> contact,
+            final SeatingLayout component) {
         VerticalLayout select = new VerticalLayout();
 
-        ListSelect list= new ListSelect("Select wanted contact");
+        NativeSelect<Contact> list = new NativeSelect<>(
+                "Select wanted contact");
         list.setWidth("100%");
-        list.setNullSelectionAllowed(false);
         select.addComponent(list);
 
-        for (Contact c : contact) {
-            list.addItem(c);
-            list.setItemCaption(c, c.name);
-        }
+        list.setItems(contact);
+        list.setItemCaptionGenerator(Contact::getName);
+
         final Window w = new Window("Multiple contacts found");
         w.setContent(select);
         w.setResizable(false);
 
-        list.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                component.highlightContact((Contact) valueChangeEvent.getProperty().getValue());
-                w.close();
-            }
+        list.addValueChangeListener(valueChange -> {
+            component.highlightContact(valueChange.getValue());
+            w.close();
         });
 
         addWindow(w);
@@ -256,9 +254,12 @@ public class DemoUI extends UI {
     }
 
     public Contact createContact(int id) {
-        final String surName = Names.surNames[rand.nextInt(Names.surNames.length)];
-        final String firstName = Names.firstNames[rand.nextInt(Names.firstNames.length)];
-        return new Contact(Contact.uuid(), firstName + " " + surName, null, Colours.cssColours[id%Colours.cssColours.length], "", "");
+        final String surName = Names.surNames[rand
+                .nextInt(Names.surNames.length)];
+        final String firstName = Names.firstNames[rand
+                .nextInt(Names.firstNames.length)];
+        return new Contact(Contact.uuid(), firstName + " " + surName, null,
+                Colours.cssColours[id % Colours.cssColours.length], "", "");
     }
 
 }

@@ -39,6 +39,10 @@ public class Contact implements Serializable {
         this.quotedPerson = quotedPerson;
     }
 
+    public String getName() {
+        return name;
+    }
+
     private static final char[] CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
 
     public static String uuid() {

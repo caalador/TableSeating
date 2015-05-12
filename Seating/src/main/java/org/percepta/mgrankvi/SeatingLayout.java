@@ -1,10 +1,11 @@
 package org.percepta.mgrankvi;
 
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
-import com.google.gwt.thirdparty.guava.common.collect.Maps;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HasComponents;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.percepta.mgrankvi.client.SeatingLayoutState;
 import org.percepta.mgrankvi.client.contact.Contact;
 

@@ -1,4 +1,4 @@
-@import "../reindeer/reindeer.scss";
+@import "../valo/valo.scss";
 
 $gray: #d1d1cf;
 $green: #40b527;
@@ -8,7 +8,7 @@ $darkgreen: darken($green, 30%);
 .demo {
 
 	// Include reindeer theme styles in your theme
-	@include reindeer;
+	@include valo;
 
 	// You can style your demo app right here
 	.demoContentLayout {
