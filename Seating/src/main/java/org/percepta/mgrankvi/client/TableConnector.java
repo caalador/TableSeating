@@ -7,6 +7,8 @@ import com.vaadin.shared.ui.Connect;
 import org.percepta.mgrankvi.Table;
 import org.percepta.mgrankvi.client.contact.Contact;
 
+import java.util.List;
+
 /**
  * Connector for the level visualizer component
  *
@@ -19,8 +21,20 @@ public class TableConnector extends AbstractComponentConnector {
         registerRpc(TableClientRpc.class, new TableClientRpc() {
             @Override
             public void highlightContact(Contact contact) {
-                if(contact != null ){
+                if (contact != null) {
                     getWidget().showContactPopup(contact);
+                } else {
+                    getWidget().hidePopup();
+                }
+            }
+
+            @Override
+            public void highlightContacts(List<Contact> contact) {
+                if (contact != null && !contact.isEmpty()) {
+                    if (contact.size() == 1)
+                        getWidget().showContactPopup(contact.iterator().next());
+                    else
+                        getWidget().showContactsPopup(contact);
                 } else {
                     getWidget().hidePopup();
                 }

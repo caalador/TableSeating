@@ -4,6 +4,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
@@ -32,6 +34,7 @@ public class TableWidget extends SimplePanel {
     private Style style, contactHolderStyle;
     private ContactList contactList;
     private Element content, popup, popupChair;
+    private List<Element> popupChairs = new LinkedList<>();
 
     private static ImagePreloader imagePreloader = new ImagePreloader();
 
@@ -53,7 +56,7 @@ public class TableWidget extends SimplePanel {
 
     private Element contactHolder;
 
-    private TableSeatFillDirection fillDirection;
+    private TableSeatFillDirection fillDirection = TableSeatFillDirection.LAST;
 
     private final Element tableName;
 
@@ -272,6 +275,9 @@ public class TableWidget extends SimplePanel {
     }
 
     private void createSeatsAndSetTableWidth(List<Contact> seating) {
+        if(seating.isEmpty()) {
+            return;
+        }
         int position = 10;
         int emptySeats = seatAmount - seating.size();
         int lastSeat = 0;
@@ -381,7 +387,7 @@ public class TableWidget extends SimplePanel {
                         getParent().getElement().removeChild(popup);
                         popup = null;
 
-                        if(popupChair != null) {
+                        if (popupChair != null) {
                             popupChair.getStyle().setZIndex(40);
                             popupChair = null;
                         }
@@ -411,13 +417,7 @@ public class TableWidget extends SimplePanel {
         }
 
         if (popup != null) {
-            getParent().getElement().removeChild(popup);
-            popup = null;
-
-            if(popupChair != null) {
-                popupChair.getStyle().setZIndex(40);
-                popupChair = null;
-            }
+            hidePopup();
         }
         popup = DOM.createDiv();
         setPopupStyle(x, y);
@@ -494,6 +494,25 @@ public class TableWidget extends SimplePanel {
         }
     }
 
+    public void showContactsPopup(List<Contact> highlight) {
+        VConsole.log("Highlight " + highlight);
+        if (highlight != null && !highlight.isEmpty()) {
+            Element chair = seatingMap.get(highlight.iterator().next());
+            VConsole.log("Found chair for highlight: " + (chair != null));
+            if (chair != null) {
+                showChairPopup(chair, highlight.iterator().next());
+                SafeHtmlBuilder safeHtml = new SafeHtmlBuilder();
+                for(Contact contact:highlight) {
+                    safeHtml.append(contact.getContactRender().toSafeHtml());
+                    chair = seatingMap.get(contact);
+                    chair.getStyle().setZIndex(55);
+                    popupChairs.add(chair);
+                }
+                popup.setInnerSafeHtml(safeHtml.toSafeHtml());
+            }
+        }
+    }
+
     public void hidePopup() {
         if (popup != null) {
             getParent().getElement().removeChild(popup);
@@ -502,6 +521,10 @@ public class TableWidget extends SimplePanel {
                 popupChair.getStyle().setZIndex(40);
                 popupChair = null;
             }
+            for(Element chair : popupChairs) {
+                chair.getStyle().setZIndex(40);
+            }
+            popupChairs.clear();
         }
     }
 

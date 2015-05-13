@@ -1,6 +1,7 @@
 package org.percepta.mgrankvi;
 
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
+import com.google.gwt.thirdparty.guava.common.collect.Maps;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HasComponents;
@@ -71,6 +72,7 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
 
     /**
      * Get all contacts for all tables.
+     *
      * @return
      */
     public List<Contact> getContacts() {
@@ -86,6 +88,7 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
 
     /**
      * Find table that belongs to contact
+     *
      * @param contact
      * @return
      */
@@ -96,7 +99,7 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
 
             for (Component component : componentToCoordinates.keySet()) {
                 if (component instanceof Table) {
-                    if(((Table)component).getContacts().contains(contact)){
+                    if (((Table) component).getContacts().contains(contact)) {
                         searchResults.put(contact, (Table) component);
                         return (Table) component;
                     }
@@ -118,6 +121,9 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
     /**
      * Highlight contact on screen (Show contact popup)
      *
+     * Highlights multiple contacts when multiple enabled,
+     * but only highlights one person for each table.
+     *
      * @param contact
      */
     public void highlightContact(Contact contact) {
@@ -128,6 +134,39 @@ public class SeatingLayout extends AbstractLayout implements HasComponents {
                     clearHighLights();
                 }
                 table.highlightContact(contact);
+            }
+        }
+    }
+
+    /**
+     * Highlight multiple contacts on screen. These may be at the same table.
+     *
+     * @param contact
+     */
+    public void highlightContacts(Contact... contact) {
+        if(!multiple) {
+            return;
+        }
+
+        if (contact != null && contact.length > 0) {
+            if (contact.length == 1) {
+                highlightContact(contact[0]);
+                return;
+            }
+
+
+            Map<Table, List<Contact>> contactMap = Maps.newHashMap();
+            for (Contact c : contact) {
+                Table t = getTableForContact(c);
+                if (contactMap.containsKey(t)) {
+                    contactMap.get(t).add(c);
+                } else {
+                    List<Contact> contacts = Lists.newArrayList(c);
+                    contactMap.put(t, contacts);
+                }
+            }
+            for(Map.Entry<Table, List<Contact>> entry : contactMap.entrySet()) {
+                entry.getKey().highlightContacts(entry.getValue());
             }
         }
     }

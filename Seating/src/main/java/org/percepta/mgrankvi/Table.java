@@ -144,4 +144,7 @@ public class Table extends AbstractComponent {
     public void highlightContact(Contact contact) {
         getRpcProxy(TableClientRpc.class).highlightContact(contact);
     }
+    public void highlightContacts(List<Contact> contact) {
+        getRpcProxy(TableClientRpc.class).highlightContacts(contact);
+    }
 }
