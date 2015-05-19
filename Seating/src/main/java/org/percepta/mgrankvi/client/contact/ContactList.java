@@ -28,6 +28,9 @@ public class ContactList extends ScrollPanel {
      */
     public void addData(List<Contact> contacts) {
         for (final Contact contact : contacts) {
+            if(contact.name == null || contact.name.isEmpty()) {
+                continue;
+            }
             SafeHtmlBuilder safe = contact.getContactRender();
 
             Element div = DOM.createDiv();
