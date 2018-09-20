@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/seating-add-on)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/seating-add-on.svg)](https://vaadin.com/directory/component/seating-add-on)
+
 # MyComponent Add-on for Vaadin 7
 
 MyComponent is an UI component add-on for Vaadin 7.
